@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>Set_Json_Blob</RootNamespace>
+		<AssemblyName>Set Json Blob</AssemblyName>
+		<TargetFramework>net472</TargetFramework>
+		<AssemblyTitle>Cap.Ipfs.Corporate.Entities</AssemblyTitle>
+		<Product>Cap.Ipfs.Corporate.Entities</Product>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+		<DebugType>pdbonly</DebugType>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Deterministic>false</Deterministic>
+		<Prefer32Bit>true</Prefer32Bit>
+		<AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+		<LangVersion>8.0</LangVersion>
+		<NullableContextOptions>disable</NullableContextOptions>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+		<GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+		<GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Prism.Core" Version="8.1.97" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\Repos\Ipfs\Base\Base Classes\Base Classes.csproj" />
+	  <ProjectReference Include="..\..\..\..\Repos\Ipfs\Base\Base Data Access Classes\Base Data Access Classes.csproj" />
+	  <ProjectReference Include="..\..\..\..\Repos\Ipfs\Corporate Core\Libraries\Corporate Core\Corporate Core.csproj" />
+	  <ProjectReference Include="..\..\..\..\Repos\Ipfs\Corporate Core\Libraries\Corporate Entities\Corporate Entities.csproj" />
+	</ItemGroup>
+</Project>
