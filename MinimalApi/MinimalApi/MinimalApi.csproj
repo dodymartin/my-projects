@@ -7,9 +7,41 @@
     <UserSecretsId>1cea5400-667e-4035-bd07-1917bef42fc6</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
+	<PropertyGroup>
+		<Deterministic>false</Deterministic>
+		<AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>disable</Nullable>
+		<NullableContextOptions>disable</NullableContextOptions>
+		<RuntimeIdentifier>win-x86</RuntimeIdentifier>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+		<ResourceLanguages>en</ResourceLanguages>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+		<GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+	<ItemGroup>
+	  <Content Include="..\..\NLog.json" Link="NLog.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
+    <PackageReference Include="NLog" Version="5.1.3" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.2.3" />
+    <PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Stratos Core\Stratos Core Data\Stratos Core Data.csproj" />
+    <ProjectReference Include="..\..\..\Stratos Core\Stratos Core Web Api\Stratos Core Web Api.csproj" />
+    <ProjectReference Include="..\..\..\Stratos Core\Stratos Core\Stratos Core.csproj" />
   </ItemGroup>
 
 </Project>

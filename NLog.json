@@ -1,0 +1,244 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "Microsoft.AspNetCore": "Warning"
+    },
+    "NLog": {
+      "IncludeScopes": true,
+      "RemoveLoggerFactoryFilter": true
+    }
+  },
+  "NLog": {
+    "autoReload": true,
+    "throwConfigExceptions": false,
+    "internalLogLevel": "Off",
+    "internalLogFile": "${basedir}/logs/internal-nlog.txt",
+    "extensions": [
+      { "assembly": "NLog.Extensions.Logging" },
+      { "assembly": "NLog.Web.AspNetCore" },
+      { "assembly": "NLog.WindowsEventLog" },
+      { "assembly": "NLog.WindowsIdentity " }
+    ],
+    "variables": {
+      "var_logdir": "c:/temp"
+    },
+    "time": {
+      "type": "AccurateLocal"
+    },
+    "default-wrapper": {
+      "type": "AsyncWrapper",
+      "overflowAction": "Block"
+    },
+    "targets": {
+      "console": {
+        "type": "ColoredConsole",
+        "layout": "${level:uppercase=true} ${longdate} ${message}",
+        "rowHighlightingRules": [
+          {
+            "condition": "level == LogLevel.Info",
+            "foregroundColor": "DarkGreen"
+          },
+          {
+            "condition": "level == LogLevel.Debug",
+            "foregroundColor": "Magenta"
+          },
+          {
+            "condition": "level == LogLevel.Warning",
+            "foregroundColor": "DarkYellow"
+          },
+          {
+            "condition": "level == LogLevel.Error",
+            "foregroundColor": "DarkRed"
+          },
+          {
+            "condition": "level == LogLevel.Fatal",
+            "foregroundColor": "Red",
+            "backgroundColor": "White"
+          }
+        ]
+      },
+      "logFile": {
+        "type": "File",
+        "fileName": "${basedir}/logs/log ${shortdate}.csv",
+        "layout": {
+          "type": "CSVLayout",
+          "Columns": [
+            {
+              "name": "level",
+              "layout": "${level:uppercase=true}"
+            },
+            {
+              "name": "logFileName",
+              "layout": "${scope-property:logFileName}"
+            },
+            {
+              "name": "identity",
+              "layout": "${windows-identity}"
+            },
+            {
+              "name": "aspnet-identity",
+              "layout": "${aspnet-user-identity} "
+            },
+            {
+              "name": "processid",
+              "layout": "${processid}"
+            },
+            {
+              "name": "datetime",
+              "layout": "${date:format=yyyy-MM-dd HH\\:mm\\:ss.FFFF}"
+            },
+            {
+              "name": "callsite",
+              "layout": "${callsite:className=True:includeNamespace=False:fileName=False:includeSourcePath=False:methodName=True:cleanNamesOfAnonymousDelegates=True:cleanNamesOfAsyncContinuations=True}"
+            },
+            {
+              "name": "message",
+              "layout": "${message}"
+            }
+          ]
+        }
+      },
+      "logFile2": {
+        "type": "File",
+        "fileName": "${basedir}/logs/log ${shortdate} ${scope-property:logFileName}.csv",
+        "layout": {
+          "type": "CSVLayout",
+          "Columns": [
+            {
+              "name": "level",
+              "layout": "${level:uppercase=true}"
+            },
+            {
+              "name": "logFileName",
+              "layout": "${scope-property:logFileName}"
+            },
+            {
+              "name": "identity",
+              "layout": "${windows-identity}"
+            },
+            {
+              "name": "processid",
+              "layout": "${processid}"
+            },
+            {
+              "name": "datetime",
+              "layout": "${date:format=yyyy-MM-dd HH\\:mm\\:ss.FFFF}"
+            },
+            {
+              "name": "callsite",
+              "layout": "${callsite:className=True:includeNamespace=False:fileName=False:includeSourcePath=False:methodName=True:cleanNamesOfAnonymousDelegates=True:cleanNamesOfAsyncContinuations=True}"
+            },
+            {
+              "name": "message",
+              "layout": "${message}"
+            }
+          ]
+        }
+      },
+      "eventLog": {
+        "type": "EventLog",
+        "log": "PFS Application",
+        "layout": "${windows-identity} ${processid} ${callsite:className=True:includeNamespace=False:fileName=False:includeSourcePath=False:methodName=True:cleanNamesOfAnonymousDelegates=True:cleanNamesOfAsyncContinuations=True} ${event-properties:item=fileName} ${event-properties:item=parameter0} ${event-properties:item=parameter1} ${event-properties:item=parameter2} ${message}"
+      }
+    },
+    "rules": [
+      { "logger": "Microsoft*", "maxLevel": "Error", "final": true },
+      {
+        "logger": "*",
+        "minLevel": "Trace",
+        "writeTo": "console",
+        "filterDefaultAction": "Log",
+        "filters": [
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler cleanup cycle')",
+            "action": "Ignore"
+          },
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler expired')",
+            "action": "Ignore"
+          }
+        ]
+      },
+      {
+        "logger": "*",
+        "minLevel": "Info",
+        "writeTo": "logFile",
+        "filterDefaultAction": "Log",
+        "filters": [
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler cleanup cycle')",
+            "action": "Ignore"
+          },
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler expired')",
+            "action": "Ignore"
+          }
+        ]
+      },
+      {
+        "logger": "*",
+        "minLevel": "Info",
+        "writeTo": "logFile2",
+        "filterDefaultAction": "Log",
+        "filters": [
+          {
+            "type": "when",
+            "condition": "length('${scope-property:logFileName}') == 0",
+            "action": "Ignore"
+          },
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler cleanup cycle')",
+            "action": "Ignore"
+          },
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler expired')",
+            "action": "Ignore"
+          }
+        ]
+      },
+      {
+        "logger": "Microsoft.*",
+        "minLevel": "Info",
+        "final": true,
+        "filterDefaultAction": "Log",
+        "filters": [
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler cleanup cycle')",
+            "action": "Ignore"
+          },
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler expired')",
+            "action": "Ignore"
+          }
+        ]
+      },
+      {
+        "logger": "*",
+        "minLevel": "Warn",
+        "writeTo": "eventLog",
+        "filterDefaultAction": "Log",
+        "filters": [
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler cleanup cycle')",
+            "action": "Ignore"
+          },
+          {
+            "type": "when",
+            "condition": "contains('${message}','HttpMessageHandler expired')",
+            "action": "Ignore"
+          }
+        ]
+      }
+    ]
+  }
+}

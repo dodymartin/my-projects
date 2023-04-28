@@ -1,0 +1,76 @@
+[
+  {
+    "PurposeName": "EwmAuthentication",
+    "Users": [
+      {
+        "Audience": "",
+        "Username": "RFI_IPFS_EWD",
+        "EncryptedPassword": "wqIvlXSevW+S3L9dK9W8m3UUdeiSRhVFmwl+m8Z0hy4=",
+        "Order": 1
+      },
+      {
+        "Audience": "",
+        "Username": "RFI_IPFS_EW3",
+        "EncryptedPassword": "m0qNZ4qsPvQHhV3m/Y0x8A==",
+        "Order": 2
+      },
+      {
+        "Audience": "",
+        "Username": "RFI_IPFS_EW5",
+        "EncryptedPassword": "yorKFM4M4zz3Ng5pxliESQ==",
+        "Order": 3
+      }
+    ]
+  },
+  {
+    "PurposeName": "ItAuthentication",
+    "Users": [
+      {
+        "Audience": "",
+        "Username": "TEST_USR",
+        "EncryptedPassword": "jej5jvohJLWKtPB8d/J82g==",
+        "Order": 1
+      },
+      {
+        "Audience": "",
+        "Username": "PS791453",
+        "EncryptedPassword": "pNK0mpxvbsRk17dy3xTLyA==",
+        "Order": 2
+      },
+      {
+        "Audience": "",
+        "Username": "PS039362",
+        "EncryptedPassword": "f2q6jGMhI7vYxgJXkiYGkw==",
+        "Order": 3
+      }
+    ]
+  },
+  {
+    "PurposeName": "MiiAuthentication",
+    "Users": [
+      {
+        "Audience": "",
+        "Username": "TESTIPFS",
+        "EncryptedPassword": "DiVCgyS8G2l+K8w0GkbDvQ==",
+        "Order": 1
+      },
+      {
+        "Audience": "",
+        "Username": "MOMService",
+        "EncryptedPassword": "BPGycGh7H4uY45g8Hm6GwA==",
+        "Order": 2
+      }
+    ]
+  },
+  {
+    "PurposeName": "RestAuthentication",
+    "Users": [
+      {
+        "Audience": "9uy8pql28c44u30d",
+        "Username": "RESTUSR",
+        "EncryptedPassword": "hDW5C60RYs0o54nGYnZeGg==",
+        "Order": 1
+      }
+    ]
+  }
+]

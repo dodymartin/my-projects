@@ -1,0 +1,730 @@
+[
+  {
+    "Name": "Dev_Box_Production",
+    "Sid": "MSWICH1788W",
+    "InitialCatalog": "Bpfa",
+    "ConnectionType": "Sql",
+    "UserName": "",
+    "EncryptedPassword": ""
+  },
+  {
+    "Name": "Dev_Box_Storage",
+    "Sid": "dbxsn",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Dev_Corporate",
+    "Sid": "dpfsn2",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "x6qL7wz0jCCRH4LQYwuFSw=="
+  },
+  {
+    "Name": "Dev_Corporate_Tcd",
+    "Sid": "dpfsncp",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Dev_Local_SqlExpress",
+    "Sid": ".\\sqlexpress",
+    "InitialCatalog": "",
+    "ConnectionType": "Sql",
+    "UserName": "",
+    "EncryptedPassword": ""
+  },
+  {
+    "Name": "Dev_PC",
+    "Sid": "dev_pc_ppfa",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Dev_Plant",
+    "Sid": "dpfsn",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "x6qL7wz0jCCRH4LQYwuFSw=="
+  },
+  {
+    "Name": "Dev_Plant_Tcd",
+    "Sid": "dpfsnpt",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Dev_Recall",
+    "Sid": "drecn",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "LocalBpfa",
+    "Sid": "",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "prod",
+    "EncryptedPassword": "UkaYLK0s9hHPdZoCss3ftA=="
+  },
+  {
+    "Name": "LocalDb1",
+    "Sid": "Mswich1788w",
+    "InitialCatalog": "Bpfa",
+    "ConnectionType": "Sql",
+    "UserName": "",
+    "EncryptedPassword": ""
+  },
+  {
+    "Name": "LocalFabScale",
+    "Sid": "(local)",
+    "InitialCatalog": "FabScale",
+    "ConnectionType": "Sql",
+    "UserName": "prod",
+    "EncryptedPassword": "UkaYLK0s9hHPdZoCss3ftA=="
+  },
+  {
+    "Name": "LocalGrdScale",
+    "Sid": "(local)",
+    "InitialCatalog": "GrdScale",
+    "ConnectionType": "Sql",
+    "UserName": "prod",
+    "EncryptedPassword": "UkaYLK0s9hHPdZoCss3ftA=="
+  },
+  {
+    "Name": "LocalSql",
+    "Sid": "(local)",
+    "InitialCatalog": "Bpfa",
+    "ConnectionType": "Sql",
+    "UserName": "prod",
+    "EncryptedPassword": "UkaYLK0s9hHPdZoCss3ftA=="
+  },
+  {
+    "Name": "Prd_AlbertLea",
+    "Sid": "ppfsnal",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Beef_Par",
+    "Sid": "pparn",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Better_Beef",
+    "Sid": "ppfsngo",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Box_Storage_Dk",
+    "Sid": "pbxsndk2",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Box_Storage_Fc",
+    "Sid": "pbxsnfc",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Box_Storage_Ft",
+    "Sid": "pbxsnft",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Box_Storage_Ha",
+    "Sid": "pbxsnha",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Box_Storage_Sn",
+    "Sid": "pbxsnsn",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Brampton",
+    "Sid": "ppfsnbr",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Butler",
+    "Sid": "ppfsnbt",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Calgary",
+    "Sid": "ppfsncc",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Calmo",
+    "Sid": "ppfsncl",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Calmo_PC",
+    "Sid": "ppfsncl",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Camp_Hill",
+    "Sid": "ppfsncp",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Chambly",
+    "Sid": "ppfsnch",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Cfd",
+    "Sid": "ppfsndc",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Columbia",
+    "Sid": "ppfsnwe",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Columbus",
+    "Sid": "ppfsnco",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Corporate",
+    "Sid": "ppfsn2",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Dayton",
+    "Sid": "ppfsndy",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Dayton_PC",
+    "Sid": "ppfsndy",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Dayton_PI",
+    "Sid": "msdayv03mp",
+    "InitialCatalog": "PIDayton",
+    "ConnectionType": "Sql",
+    "UserName": "pfs_link",
+    "EncryptedPassword": "9jumtw1STAREw7VYTkcDMA=="
+  },
+  {
+    "Name": "Prd_DC",
+    "Sid": "ppfsndc",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Dodge_City_Ipfs",
+    "Sid": "ppfsndk",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Dunlop_Ipfs",
+    "Sid": "ppfsndu",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Fort_Morgan_Ipfs",
+    "Sid": "ppfsnfc",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Fort_Worth",
+    "Sid": "ppfsnfw",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Fort_Worth_Cooked",
+    "Sid": "ppfsnnp",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Fresno",
+    "Sid": "ppfsnfe",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Fresno_Grind",
+    "Sid": "ppfsnfe2",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Friona_Ipfs",
+    "Sid": "ppfsnft",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Hazleton",
+    "Sid": "ppfsnhz",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_High_River_Ipfs",
+    "Sid": "ppfsnhi",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_High_River_Oracle",
+    "Sid": "pbxsnha",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Ingersoll",
+    "Sid": "ppfsnin",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_North_Kingstown",
+    "Sid": "ppfsnnk",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Marshall",
+    "Sid": "ppfsnma",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Milwaukee",
+    "Sid": "ppfsnmi",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Nashville",
+    "Sid": "ppfsnnt",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Nebraska_City",
+    "Sid": "ppfsnnb",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Newnan",
+    "Sid": "ppfsnnw",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_OND",
+    "Sid": "pzons",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "pfs_ond",
+    "EncryptedPassword": "U4n7OeF707uczcShmzTj1g=="
+  },
+  {
+    "Name": "Prd_PC",
+    "Sid": "",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "prod",
+    "EncryptedPassword": "UkaYLK0s9hHPdZoCss3ftA=="
+  },
+  {
+    "Name": "Prd_Recall",
+    "Sid": "precn",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Round_Rock",
+    "Sid": "ppfsnrt",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Schuyler_Ipfs",
+    "Sid": "ppfsnsn",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Springdale",
+    "Sid": "ppfsnsp",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Springdale_PC",
+    "Sid": "ppfsnsp",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Spruce_Grove",
+    "Sid": "ppfsnsg",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Timberville",
+    "Sid": "ppfsnti",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Vbp",
+    "Sid": "pvbpn",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "VBPUSER",
+    "EncryptedPassword": "jSdmee4vkV6BxRBhb9yrbg=="
+  },
+  {
+    "Name": "Prd_Vemac",
+    "Sid": "msnash32mp",
+    "InitialCatalog": "VemacCargill",
+    "ConnectionType": "Sql",
+    "UserName": "pfs_usr",
+    "EncryptedPassword": "F30JUuHMCVl36qzJ8XBQnA=="
+  },
+  {
+    "Name": "Prd_Vernon",
+    "Sid": "ppfsnvc",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Waco",
+    "Sid": "ppfsnwc",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Waco_PC",
+    "Sid": "ppfsnwc",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Prd_Wyalusing",
+    "Sid": "ppfsnwy",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Retrotech",
+    "Sid": "",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "prod_retrotech",
+    "EncryptedPassword": "mb27Ai+au9aFA7PO/ARb1w=="
+  },
+  {
+    "Name": "Tcd_Eds",
+    "Sid": "TCDDACSQLDB1\\SQL01",
+    "InitialCatalog": "",
+    "ConnectionType": "Sql",
+    "UserName": "ps458153",
+    "EncryptedPassword": "oABmr0dLvdHZ1xkiDonIGlXWQFmveY4yBZ024xQpKOw="
+  },
+  {
+    "Name": "Tcd_Qas2",
+    "Sid": "TCDDACSQLDB1\\SQL02",
+    "InitialCatalog": "",
+    "ConnectionType": "Sql",
+    "UserName": "ps458153",
+    "EncryptedPassword": "oABmr0dLvdHZ1xkiDonIGlXWQFmveY4yBZ024xQpKOw="
+  },
+  {
+    "Name": "Tcd_Prod",
+    "Sid": "TCDDACSQLDB1\\SQL03",
+    "InitialCatalog": "",
+    "ConnectionType": "Sql",
+    "UserName": "ps458153",
+    "EncryptedPassword": "oABmr0dLvdHZ1xkiDonIGlXWQFmveY4yBZ024xQpKOw="
+  },
+  {
+    "Name": "Tcd_Qas1",
+    "Sid": "TCDDACSQLDB2\\SQL03",
+    "InitialCatalog": "",
+    "ConnectionType": "Sql",
+    "UserName": "ps458153",
+    "EncryptedPassword": "oABmr0dLvdHZ1xkiDonIGlXWQFmveY4yBZ024xQpKOw="
+  },
+  {
+    "Name": "Test_Box_Storage",
+    "Sid": "tbxsn",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Test_Corporate_V1",
+    "Sid": "tpfsn2",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Test_Corporate_Tcd",
+    "Sid": "tpfsncp",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Test_Plant_V1",
+    "Sid": "tpfsn1",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Test_Plant_Tcd",
+    "Sid": "tpfsnpt",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Qa_Corporate_Tcd",
+    "Sid": "qpfsncp",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Qa_Plant_Tcd",
+    "Sid": "qpfsnpt",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Qa2_Corporate_Tcd",
+    "Sid": "qpfsnscp",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "Qa2_Plant_Tcd",
+    "Sid": "qpfsnspt",
+    "InitialCatalog": "",
+    "ConnectionType": "Oracle",
+    "UserName": "ps900183",
+    "EncryptedPassword": "Zm8BGW6Ejqk8STVPp5Cdnw=="
+  },
+  {
+    "Name": "WKALP1",
+    "Sid": "WKALP1",
+    "InitialCatalog": "",
+    "ConnectionType": "Rdb",
+    "UserName": "pfs_usr7",
+    "EncryptedPassword": "k1NEDMZXJky1HU4e1LN9eg=="
+  },
+  {
+    "Name": "WKALP3",
+    "Sid": "WKALP3",
+    "InitialCatalog": "",
+    "ConnectionType": "Rdb",
+    "UserName": "pfs_usr7",
+    "EncryptedPassword": "k1NEDMZXJky1HU4e1LN9eg=="
+  },
+  {
+    "Name": "WKITA1",
+    "Sid": "WKITA1",
+    "InitialCatalog": "",
+    "ConnectionType": "Rdb",
+    "UserName": "pfs_usr7",
+    "EncryptedPassword": "k1NEDMZXJky1HU4e1LN9eg=="
+  },
+  {
+    "Name": "XLDM",
+    "Sid": "XLDM",
+    "InitialCatalog": "",
+    "ConnectionType": "Odbc",
+    "UserName": "racpfa",
+    "EncryptedPassword": "5pTw1wYbUGw5S+mA7IMMoQ=="
+  },
+  {
+    "Name": "XLIS",
+    "Sid": "XLIS",
+    "InitialCatalog": "",
+    "ConnectionType": "Odbc",
+    "UserName": "vaxtfr",
+    "EncryptedPassword": "g6L95Rle9mYnAQZPEwhk8w=="
+  },
+  {
+    "Name": "XLGO",
+    "Sid": "XLGO",
+    "InitialCatalog": "",
+    "ConnectionType": "Odbc",
+    "UserName": "racpfago",
+    "EncryptedPassword": "V6QEUwfRPpB+w30n+mbhvQ=="
+  },
+  {
+    "Name": "XLPL",
+    "Sid": "XLPL",
+    "InitialCatalog": "",
+    "ConnectionType": "Odbc",
+    "UserName": "vaxtfr",
+    "EncryptedPassword": "OBxgVeHUWPq+pDpZJzaCzA=="
+  }
+]
