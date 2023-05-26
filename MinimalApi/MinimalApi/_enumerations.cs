@@ -2,11 +2,6 @@ using Stratos.Core;
 
 namespace MinimalApi;
 
-public enum Applications
-{
-    StratosConfigurationWebApiHost = 210
-}
-
 //public enum AuthenticationTypes
 //{
 //    Basic,

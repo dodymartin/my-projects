@@ -1,12 +1,18 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MinimalApi;
-using MinimalApi.Version;
+using MinimalApi.Dal;
+using MinimalApi.Endpoints;
+using MinimalApi.Services;
 using NLog.Extensions.Logging;
 using Stratos.Core;
+using Stratos.Core.WebApi;
 
 if (Environment.UserInteractive)
 {
@@ -32,11 +38,9 @@ try
 
     #endregion
 
-    //if (Environment.UserInteractive && !Stratos.Core.CoreMethods.IsAdministrator())
-    //    throw new Exception("This app must run in as an administrator!");
-
-    //var jsonTypeInfoResolver = new JsonTypeInfoResolver();
     var builder = WebApplication.CreateBuilder(args);
+
+    #region Setup Configuration, Logging, and Routing
 
     builder.Configuration.AddConfiguration(config);
 
@@ -47,6 +51,11 @@ try
     });
 
     builder.Services.Configure<ConsoleLifetimeOptions>(opt => opt.SuppressStatusMessages = true);
+    builder.Services.AddRouting();
+
+    #endregion
+
+    #region Setup JSON.NET formatting
 
     builder.Services.Configure<JsonOptions>(opt =>
     {
@@ -54,38 +63,138 @@ try
         opt.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         opt.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         opt.SerializerOptions.WriteIndented = true;
-        //opt.SerializerOptions.TypeInfoResolver = jsonTypeInfoResolver;
     });
 
-    builder.Services.AddRouting();
+    #endregion
 
-    //builder.Services.AddAuthentication(opt =>
-    //{
-    //    opt.DefaultAuthenticateScheme = BasicDefaults.AuthenticationScheme;
-    //    opt.DefaultChallengeScheme = BasicDefaults.AuthenticationScheme;
-    //})
-    //.AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicDefaults.AuthenticationScheme, null)
-    //.AddJwtBearer(opts =>
-    //{
-    //    opts.SaveToken = true;
-    //    opts.TokenValidationParameters = JwtConfiguration.GetTokenValidationParameters();
-    //});
+    #region Add Authentication/Authorization
 
-    builder.Services.AddServices(builder.Configuration);
+    // Add Basic Authorization
+    builder.Services.AddAuthentication()
+        .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicDefaults.AuthenticationScheme, null);
+    builder.Services.AddAuthorizationBuilder()
+        .AddPolicy(BasicDefaults.AuthenticationScheme, policy =>
+        {
+            policy.RequireAuthenticatedUser()
+                .AuthenticationSchemes.Add(BasicDefaults.AuthenticationScheme);
+        });
+
+    // Add JWT Authorization
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(opts =>
+        {
+            opts.SaveToken = true;
+            opts.TokenValidationParameters = JwtConfiguration.GetTokenValidationParameters();
+        });
+    builder.Services.AddAuthorization();
+
+    #endregion
+
+    #region Add Services
+
+    builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
+
+    // TODO: From AddBootstrapServices, create new methods
+    //  AddCoreLoaderServices and AddCoreHttpServices, do not
+    //  include AuthenticationWebApi and ConfigurationWebApi
+
+    //services.AddBootstrapServices();
+    builder.Services.TryAddSingleton(ClientSideUsersLoader.Load());
+    builder.Services.TryAddSingleton(DatabasesLoader.Load());
+    builder.Services.TryAddSingleton(SiteConfigurationLoader.Load());
+
+    // Register IApplicationContext to force feeding ApplicationId
+    builder.Services.TryAddSingleton<IApplicationContext>(sp =>
+    {
+        var logger = sp.GetRequiredService<ILogger<ApplicationContext>>();
+        return new ApplicationContext(
+            logger,
+            (int)Applications.StratosConfigurationWebApiHost);
+    });
+
+    // Register IServiceSideUsers (serviceSideUsers.json)
+    builder.Services.TryAddSingleton(ServiceSideUsersLoader.Load());
+
+    // Register each typed AppSettings class to Section in appsettings.json
+    builder.Services.Configure<MinimalApi.AppSettings>(config.GetSection("AppSettings"));
+    builder.Services.Configure<Stratos.Core.Data.AppSettings>(config.GetSection("Stratos.Core.Data.AppSettings"));
+
+    // Register DbContexts
+    //builder.Services.TryAddTransient<IAuthenticationDataService, AuthenticationDataService>();
+    builder.Services.TryAddScoped<DbContextSettings>();
+    builder.Services.TryAddScoped<MinimalApiDbContext>();
+
+    // Register Worker services
+    builder.Services.TryAddSingleton<Stratos.Core.WebApi.IAuthenticationService, Stratos.Core.WebApi.AuthenticationService>();
+    builder.Services.TryAddScoped<ApiCallUsageService>();
+    builder.Services.TryAddScoped<BaseUriService>();
+    builder.Services.TryAddScoped<ControllerService>();
+    builder.Services.TryAddScoped<DatabaseService>();
+    builder.Services.TryAddScoped<PingService>();
+    builder.Services.TryAddScoped<UnitOfWorkService>();
+    builder.Services.TryAddScoped<VersionService>();
+
+    // Register Validators
+    builder.Services.TryAddSingleton<BaseUriRequestValidator>();
+    builder.Services.TryAddSingleton<DatabaseRequestValidator>();
+    builder.Services.TryAddSingleton<PingUriRequestValidator>();
+    builder.Services.TryAddSingleton<VersionCheckMinimumRequestValidator>();
+
+    #endregion
 
     var app = builder.Build();
+
+    #region Add Global Exception handler
+
+    app.Use(async (ctx, next) =>
+    {
+        try
+        {
+            await next();
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogError(ex.ToString());
+            ctx.Response.StatusCode = 500;
+            await ctx.Response.WriteAsync("An error has occured, check api log file for details.");
+        }
+    });
+
+    #endregion
+
+    #region Enable buffering
+
+    // Enables HttpRequest.Body to not be forward-only,
+    // so we can log AND process it
+    app.Use((context, next) =>
+    {
+        context.Request.EnableBuffering();
+        return next();
+    });
+
+    #endregion
 
     app.UseHttpsRedirection();
     app.UseRouting();
 
-    //app.UseAuthentication();
-    //app.UseAuthorization();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-    app.UseVersionWebApi();
+    #region Add endpoints
+
+    var group = app.MapGroup("api/configuration/v6")
+        .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
+        .AddEndpointFilter<CallUsageFilter>();
+
+    group.UseBaseUriEndpoints();
+    group.UseControllerEndpoints();
+    group.UseDatabaseEndpoints();
+    group.UsePingEndpoints();
+    group.UseVersionEndpoints();
+
+    #endregion
 
     app.Run();
-
-    //await DoProcessingAsync(args, config);
 }
 catch (Exception ex)
 {
@@ -97,174 +206,3 @@ NLog.LogManager.GetCurrentClassLogger().Log(NLog.LogLevel.Info, "Stopping");
 
 if (Environment.UserInteractive)
     Console.ReadKey();
-
-//static async Task DoProcessingAsync(string[] args, IConfiguration config)
-//{
-//    //var baseUri = Initialize(config);
-
-//    var customContractResolver = new CustomContractResolver();
-//    var host = Host.CreateDefaultBuilder(args)
-//        .UseWindowsService()
-//        .ConfigureAppConfiguration(builder =>
-//        {
-//            // Commented out, since it will clear the Url configured below.
-//            //builder.Sources.Clear();
-//            builder.AddConfiguration(config);
-//        })
-//        .ConfigureWebHostDefaults(webBuilder =>
-//        {
-//            #region Configure for Http
-
-//            webBuilder.UseContentRoot(Environment.CurrentDirectory);
-//            //webBuilder.UseUrls(new string[] { baseUri });
-
-//            //// The following UseHttpSys gets the service, if listening on https,
-//            //// to use the certificate bound to the port that was added using
-//            //// netsh, otherwise, you would have to load the server certificate
-//            //// in ConfigureServices.This ties the service to only hosting on
-//            //// Windows, which is not currently a problem.
-//            //webBuilder.UseHttpSys();
-//            webBuilder.Configure(app =>
-//            {
-//                //app.UseOwin();
-//                app.UseRouting();
-
-//                app.UseAuthentication();
-//                app.UseAuthorization();
-
-//                app.UseEndpoints(endpoints => endpoints.MapControllers());
-//            });
-
-//            #endregion
-//        })
-//        .ConfigureServices((_, services) =>
-//        {
-//            #region Configure for Web Api
-
-//            services.AddControllers()
-//                .AddNewtonsoftJson(opt =>
-//                {
-//                    opt.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
-//                    opt.SerializerSettings.Formatting = Formatting.Indented;
-//                    opt.SerializerSettings.ContractResolver = customContractResolver;
-//                })
-//                .AddApplicationPart(Assembly.GetEntryAssembly())
-//                .AddControllersAsServices();
-
-//            services.AddRouting();
-
-//            services.AddAuthentication(opt =>
-//            {
-//                opt.DefaultAuthenticateScheme = BasicDefaults.AuthenticationScheme;
-//                opt.DefaultChallengeScheme = BasicDefaults.AuthenticationScheme;
-//            })
-//            .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicDefaults.AuthenticationScheme, null)
-//            .AddJwtBearer(opts =>
-//            {
-//                opts.SaveToken = true;
-//                opts.TokenValidationParameters = JwtConfiguration.GetTokenValidationParameters();
-//            });
-
-//            services.Configure<ConsoleLifetimeOptions>(opts => opts.SuppressStatusMessages = true);
-
-//            #endregion
-
-//            services.AddHttpContextAccessor();
-//            services.AddServices(config);
-//        })
-//        .Build();
-
-//    customContractResolver.Initialize(host.Services);
-//    await host.RunAsync();
-//}
-
-//static string Initialize(IConfiguration config)
-//{
-//    var services = new ServiceCollection();
-//    services.AddServices(config);
-//    using var serviceProvider = services.BuildServiceProvider();
-//    var logger = serviceProvider.GetRequiredService<ILogger<object>>();
-
-//    #region Checking Environment Type
-
-//    var appSettings = serviceProvider.GetRequiredService<IOptions<AppSettings>>().Value;
-//    if (!string.IsNullOrEmpty(appSettings.DatabaseName))
-//    {
-//        var databaseName = appSettings.DatabaseName;
-//        logger.LogInformation("Checking that Environment Type matches for {databaseName}", appSettings.DatabaseName);
-
-//        // Get current database's environment type
-//        var queryEngineFactory = serviceProvider.GetRequiredService<IQueryEngineFactory>();
-//        using var qe = queryEngineFactory.Create(databaseName);
-//        var db =
-//            (from d in qe.Query<Database>()
-//             where d.Name == databaseName
-//             select d)
-//            .FirstOrDefault();
-//        if (db != null)
-//        {
-//            var environmentType = (EnvironmentTypes)Enum.Parse(typeof(EnvironmentTypes), appSettings.EnvironmentType);
-//            if (db.EnvironmentType.Id != environmentType)
-//                throw new Exception($"The Environment Type for {databaseName} ({db.EnvironmentType.Id}) does not match value found in appsettings.json ({environmentType}), so service will not start!");
-
-//            // Refresh the cache files at startup
-//            var cacheService = serviceProvider.GetRequiredService<ICacheService>();
-//            cacheService.Refresh(databaseName, environmentType);
-//        }
-//    }
-
-//    #endregion
-
-//    logger.LogInformation("Listening on: {baseUri}", appSettings.BaseUri);
-
-//    return appSettings.BaseUri;
-//}
-
-public static class Services
-{
-    public static void AddServices(this IServiceCollection services, IConfiguration config)
-    {
-        services.AddBootstrapServices();
-
-        // Register IApplicationContext to force feeding ApplicationId
-        services.TryAddSingleton<IApplicationContext>(sp =>
-        {
-            var logger = sp.GetRequiredService<ILogger<ApplicationContext>>();
-            return new ApplicationContext(
-                logger,
-                (int)Applications.StratosConfigurationWebApiHost);
-        });
-
-        // Register IServiceSideUsers (serviceSideUsers.json)
-        services.TryAddSingleton(ServiceSideUsersLoader.Load());
-
-        // Register each typed AppSettings class to Section in appsettings.json
-        services.Configure<MinimalApi.AppSettings>(config.GetSection("AppSettings"));
-        services.Configure<Stratos.Core.AppSettings>(config.GetSection("Stratos.Core.AppSettings"));
-        services.Configure<Stratos.Core.Data.AppSettings>(config.GetSection("Stratos.Core.Data.AppSettings"));
-
-        //// Register ISessionBuilder, IQueryEngine and IQueryEngine
-        //services.TryAddSingleton<ISessionBuilder, SessionBuilder>();
-        //services.AddQueryEngineFactory(ServiceLifetime.Transient);
-        //services.AddStatelessQueryEngineFactory(ServiceLifetime.Transient);
-
-        // Register Data services
-        //services.TryAddTransient<IAuthenticationDataService, AuthenticationDataService>();
-        //services.TryAddTransient<IBaseUriParmsDataService, BaseUriParmsDataService>();
-        //services.TryAddTransient<ICacheDataService, CacheDataService>();
-        //services.TryAddTransient<IControllerUriParmsDataService, ControllerUriParmsDataService>();
-        //services.TryAddTransient<IDatabaseNameDataService, DatabaseNameDataService>();
-        //services.TryAddTransient<IPingUriParmsDataService, PingUriParmsDataService>();
-        //services.TryAddTransient<IUriDataService, UriDataService>();
-        //services.TryAddTransient<IUsageDataService, UsageDataService>();
-        services.TryAddScoped<VersionDataContextSettings>();
-        services.TryAddScoped<IVersionDataContext, VersionDataContext>();
-
-        // Register Worker services
-        //services.TryAddSingleton<Stratos.Core.WebApi.IAuthenticationService, Stratos.Core.WebApi.AuthenticationService>();
-        //services.TryAddSingleton<ICacheService, CacheService>();
-        //services.TryAddScoped<IDatabaseNameService, DatabaseNameService>();
-        //services.TryAddScoped<IUriService, UriService>();
-        services.TryAddScoped<IVersionService, VersionService>();
-    }
-}

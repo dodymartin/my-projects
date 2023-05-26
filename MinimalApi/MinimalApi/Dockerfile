@@ -7,8 +7,9 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["MinimalApi/MinimalApi.csproj", "MinimalApi/"]
-RUN dotnet restore "MinimalApi/MinimalApi.csproj"
+COPY ["MinimalApi/MinimalApi/MinimalApi.csproj", "MinimalApi/"]
+COPY ./nuget.config /root/.nuget/NuGet/
+RUN dotnet restore "MinimalApi/MinimalApi.csproj" --configfile /root/.nuget/NuGet/nuget.config
 COPY . .
 WORKDIR "/src/MinimalApi"
 RUN dotnet build "MinimalApi.csproj" -c Release -o /app/build
@@ -19,4 +20,5 @@ RUN dotnet publish "MinimalApi.csproj" -c Release -o /app/publish /p:UseAppHost=
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN del -f /root/.nuget/NuGet/nuget.config
 ENTRYPOINT ["dotnet", "MinimalApi.dll"]

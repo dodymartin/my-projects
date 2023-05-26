@@ -1,8 +1,8 @@
 ﻿using Stratos.Core;
 
-namespace MinimalApi.Version;
+namespace MinimalApi.Dal;
 
-public class VersionDataContextSettings
+public class DbContextSettings
 {
     private readonly IDatabases _dbs;
 
@@ -25,7 +25,7 @@ public class VersionDataContextSettings
         }
     }
 
-    public VersionDataContextSettings(IDatabases dbs)
+    public DbContextSettings(IDatabases dbs)
     {
         _dbs = dbs;
     }
