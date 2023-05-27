@@ -13,7 +13,7 @@ public class VersionService
 
     public async Task<bool> CheckMinimumVersionAsync(VersionCheckMinimumRequest request)
     {
-        var apln = await _uow.ApplicationRepo.GetApplicationAsync(request.ApplicationId.Value);
+        var apln = await _uow.ApplicationRepo.GetApplicationAsync(request.ApplicationId, request.ApplicationName);
         if (apln is null)
             return await Task.FromResult(false);
 

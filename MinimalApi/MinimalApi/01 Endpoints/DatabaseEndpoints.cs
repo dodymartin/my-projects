@@ -12,16 +12,16 @@ public static class DatabaseEndpoints
 
         var namesGroup = group.MapGroup("/names");
 
-        group.MapPost("/",
+        namesGroup.MapPost("/",
             GetDatabaseNameAsync);
 
-        group.MapPost("/corporate",
+        namesGroup.MapPost("/corporate",
             GetCorporateDatabaseNameAsync);
 
-        group.MapPost("/corporate/rdb",
+        namesGroup.MapPost("/corporate-rdb",
             GetCorporateRdbDatabaseNameAsync);
 
-        group.MapPost("/parent",
+        namesGroup.MapPost("/parent",
             GetParentDatabaseNameAsync);
     }
 

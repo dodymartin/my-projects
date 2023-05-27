@@ -12,7 +12,7 @@ public static class PingEndpoints
         group.MapGet("/",
             PingAsync);
 
-        group.MapGet("/uris",
+        group.MapPost("/uris",
             GetPingUrisAsync);
     }
 

@@ -12,18 +12,14 @@ namespace MinimalApi.Services;
 public class ApiCallUsageService
 {
     private readonly UnitOfWorkService _uow;
-    private readonly DbContextSettings _dbContextSettings;
 
-    public ApiCallUsageService(UnitOfWorkService uow, DbContextSettings dbContextSettings)
+    public ApiCallUsageService(UnitOfWorkService uow)
     {
         _uow = uow;
-        _dbContextSettings = dbContextSettings;
     }
 
-    public ApiCallUsageDto Create(string databaseName, EndpointFilterInvocationContext context, EndpointFilterFactoryContext filterFactoryContext, long elapsedMilliseconds)
+    public ApiCallUsageDto Create(EndpointFilterInvocationContext context, EndpointFilterFactoryContext filterFactoryContext, long elapsedMilliseconds)
     {
-        _dbContextSettings.DatabaseName = databaseName;
-
         var apiCallUsageDto = GetDto(context, filterFactoryContext, elapsedMilliseconds);
         _uow.ApiCallUsageRepo.Insert((ApiCallUsage)apiCallUsageDto);
         _uow.Save();

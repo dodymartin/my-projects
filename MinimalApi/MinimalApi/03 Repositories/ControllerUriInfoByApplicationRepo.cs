@@ -35,8 +35,7 @@ public class ControllerUriInfoByApplicationRepo : IControllerUriInfoByApplicatio
             else
                 wav.ver
             end ver,
-            waa.ord,
-            null fac_id
+            waa.ord
         from
             cmn_mstr.web_api_ctlr wac
             join cmn_mstr.web_api_ver wav on wac.web_api_id = wav.web_api_id
@@ -83,8 +82,7 @@ public class ControllerUriInfoByApplicationRepo : IControllerUriInfoByApplicatio
                 else
                     wav.ver
                 end ver,
-                waa.ord,
-                null fac_id
+                waa.ord
             from
                 cmn_mstr.web_api_ctlr wac
                 join cmn_mstr.web_api wa on wac.web_api_id = wa.web_api_id
@@ -133,8 +131,7 @@ public class ControllerUriInfoByApplicationRepo : IControllerUriInfoByApplicatio
             else
                 wav.ver
             end ver,
-            1 ord,
-            null fac_id
+            1 ord
         from
             cmn_mstr.web_api_ctlr wac
             join cmn_mstr.web_api_ver wav on wac.web_api_id = wav.web_api_id

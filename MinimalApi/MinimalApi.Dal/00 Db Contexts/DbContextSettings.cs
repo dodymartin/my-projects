@@ -6,7 +6,7 @@ public class DbContextSettings
 {
     private readonly IDatabases _dbs;
 
-    public string DatabaseName { get; set; }
+    public string? DatabaseName { get; set; }
     public IDatabase Database
     {
         get

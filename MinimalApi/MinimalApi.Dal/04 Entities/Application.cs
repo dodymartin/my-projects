@@ -10,7 +10,7 @@ public class Application : EntityBase<Application, int>
 
     public string ExeName { get; set; }
     public string FromDirectoryName { get; set; }
-    public string MinimumAssemblyVersion { get; set; }
+    public string? MinimumAssemblyVersion { get; set; }
     public string Name { get; set; }
 
     public List<ApplicationVersion> Versions { get; set; } = new();

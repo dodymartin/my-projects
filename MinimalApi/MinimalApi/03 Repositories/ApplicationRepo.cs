@@ -12,24 +12,6 @@ public class ApplicationRepo : IApplicationRepo
         _dbContext = dbContext;
     }
 
-    public async Task<ApplicationDto> GetApplicationAsync(int applicationId)
-    {
-        return await
-            (from a in _dbContext.Applications
-             where a.Id == applicationId
-             select (ApplicationDto)a)
-            .FirstOrDefaultAsync();
-    }
-
-    public async Task<ApplicationDto> GetApplicationAsync(string applicationName)
-    {
-        return await
-            (from a in _dbContext.Applications
-             where a.Name == applicationName
-             select (ApplicationDto)a)
-            .FirstOrDefaultAsync();
-    }
-
     public async Task<ApplicationDto> GetApplicationAsync(int? applicationId, string applicationName)
     {
         if (applicationId.HasValue)
@@ -45,4 +27,26 @@ public class ApplicationRepo : IApplicationRepo
              select a.MinimumAssemblyVersion)
             .FirstOrDefaultAsync();
     }
+
+    #region Private Methods
+
+    private async Task<ApplicationDto> GetApplicationAsync(int applicationId)
+    {
+        return await
+            (from a in _dbContext.Applications
+             where a.Id == applicationId
+             select (ApplicationDto)a)
+            .FirstOrDefaultAsync();
+    }
+
+    private async Task<ApplicationDto> GetApplicationAsync(string applicationName)
+    {
+        return await
+            (from a in _dbContext.Applications
+             where a.Name == applicationName
+             select (ApplicationDto)a)
+            .FirstOrDefaultAsync();
+    }
+
+    #endregion
 }

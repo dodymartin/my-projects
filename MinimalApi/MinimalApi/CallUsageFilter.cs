@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Options;
+using MinimalApi.Dal;
 using MinimalApi.Services;
 
 namespace MinimalApi;
@@ -7,13 +8,15 @@ namespace MinimalApi;
 public class CallUsageFilter : IEndpointFilter
 {
     private readonly ILogger<CallUsageFilter> _logger;
+    private readonly DbContextSettings _dbContextSettings;
     private readonly AppSettings _appSettings;
     private readonly ApiCallUsageService _apiCallUsageService;
     private readonly EndpointFilterFactoryContext _filterFactoryContext;
 
-    public CallUsageFilter(ILogger<CallUsageFilter> logger, IOptions<AppSettings> appSettings, ApiCallUsageService apiCallUsageService, EndpointFilterFactoryContext filterFactoryContext)
+    public CallUsageFilter(ILogger<CallUsageFilter> logger, IOptions<AppSettings> appSettings, DbContextSettings dbContextSettings, ApiCallUsageService apiCallUsageService, EndpointFilterFactoryContext filterFactoryContext)
     {
         _logger = logger;
+        _dbContextSettings = dbContextSettings;
         _appSettings = appSettings.Value;
         _apiCallUsageService = apiCallUsageService;
         _filterFactoryContext = filterFactoryContext;
@@ -23,10 +26,11 @@ public class CallUsageFilter : IEndpointFilter
     {
         var sw = new Stopwatch();
         sw.Start();
+        _dbContextSettings.DatabaseName = _appSettings.DatabaseName;
         var result = await next(context);
         sw.Stop();
 
-        var apiCallUsageDto = _apiCallUsageService.Create(_appSettings.DatabaseName, context, _filterFactoryContext, sw.ElapsedMilliseconds);
+        var apiCallUsageDto = _apiCallUsageService.Create(context, _filterFactoryContext, sw.ElapsedMilliseconds);
         
         _logger.LogDebug("{url}, {methodName}, {apiMachineName}, {apiIp}, {apiApp}, {apiAppVersion}, {apiProcessId}, {requestMachineName}, {requestIp}, {requestApp}, {requestAppVersion}, {requestProcessId}, {basicUser}, {hasAuthHeader}, {elapsedTime}",
             apiCallUsageDto.Url,

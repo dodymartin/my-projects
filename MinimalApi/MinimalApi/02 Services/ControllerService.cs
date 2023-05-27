@@ -17,7 +17,7 @@ public class ControllerService
 
     public async Task<IList<ControllerUriResponse>> GetControllerUriInfoAsync(ControllerUriRequest request)
     {
-        var apln = await _uow.ApplicationRepo.GetApplicationAsync(request.ApplicationId.Value);
+        var apln = await _uow.ApplicationRepo.GetApplicationAsync(request.ApplicationId, request.ApplicationName);
         if (apln is null)
         {
             if (request.ApplicationId.HasValue)
