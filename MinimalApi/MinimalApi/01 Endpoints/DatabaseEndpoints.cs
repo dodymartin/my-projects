@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MinimalApi.Dal;
-using MinimalApi.Services;
+using MinimalApi.Core;
+using MinimalApi.Shared;
 
 namespace MinimalApi.Endpoints;
 

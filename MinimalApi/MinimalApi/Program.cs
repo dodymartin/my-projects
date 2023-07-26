@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MinimalApi;
-using MinimalApi.Dal;
+using MinimalApi.Core;
 using MinimalApi.Endpoints;
-using MinimalApi.Services;
+using MinimalApi.Infra;
+using MinimalApi.Shared;
 using NLog.Extensions.Logging;
 using Stratos.Core;
 using Stratos.Core.WebApi;
@@ -98,7 +99,7 @@ try
     //  AddCoreLoaderServices and AddCoreHttpServices, do not
     //  include AuthenticationWebApi and ConfigurationWebApi
 
-    //services.AddBootstrapServices();
+    //builder.Services.AddBootstrapServices();
     builder.Services.TryAddSingleton(ClientSideUsersLoader.Load());
     builder.Services.TryAddSingleton(DatabasesLoader.Load());
     builder.Services.TryAddSingleton(SiteConfigurationLoader.Load());
@@ -116,29 +117,19 @@ try
     builder.Services.TryAddSingleton(ServiceSideUsersLoader.Load());
 
     // Register each typed AppSettings class to Section in appsettings.json
-    builder.Services.Configure<MinimalApi.AppSettings>(config.GetSection("AppSettings"));
+    builder.Services.Configure<MinimalApi.Core.AppSettings>(config.GetSection("MinimalApi.Core.AppSettings"));
     builder.Services.Configure<Stratos.Core.Data.AppSettings>(config.GetSection("Stratos.Core.Data.AppSettings"));
 
     // Register DbContexts
     //builder.Services.TryAddTransient<IAuthenticationDataService, AuthenticationDataService>();
-    builder.Services.TryAddScoped<DbContextSettings>();
-    builder.Services.TryAddScoped<MinimalApiDbContext>();
 
     // Register Worker services
     builder.Services.TryAddSingleton<Stratos.Core.WebApi.IAuthenticationService, Stratos.Core.WebApi.AuthenticationService>();
-    builder.Services.TryAddScoped<ApiCallUsageService>();
-    builder.Services.TryAddScoped<BaseUriService>();
-    builder.Services.TryAddScoped<ControllerService>();
-    builder.Services.TryAddScoped<DatabaseService>();
-    builder.Services.TryAddScoped<PingService>();
-    builder.Services.TryAddScoped<UnitOfWorkService>();
-    builder.Services.TryAddScoped<VersionService>();
 
-    // Register Validators
-    builder.Services.TryAddSingleton<BaseUriRequestValidator>();
-    builder.Services.TryAddSingleton<DatabaseRequestValidator>();
-    builder.Services.TryAddSingleton<PingUriRequestValidator>();
-    builder.Services.TryAddSingleton<VersionCheckMinimumRequestValidator>();
+    // Registration for Assemblies
+    builder.Services.AddCoreServices();
+    builder.Services.AddInfraServices();
+    builder.Services.AddSharedServices();
 
     #endregion
 
