@@ -14,7 +14,7 @@ public static class Encryptor2
             throw new ArgumentNullException(nameof(password));
 
         var dataBytes = Encoding.UTF8.GetBytes(data);
-        using var pdb = new Rfc2898DeriveBytes(password, Encoding.UTF8.GetBytes("Salt"));
+        using var pdb = new PasswordDeriveBytes(password, Encoding.UTF8.GetBytes("Salt"));
         using var aes = Aes.Create("AesManaged"); //new RijndaelManaged();
         aes.Padding = PaddingMode.ISO10126;
 
@@ -36,7 +36,7 @@ public static class Encryptor2
 
         var dataBytes = Convert.FromBase64String(data);
 
-        using var pdb = new Rfc2898DeriveBytes(password, Encoding.UTF8.GetBytes("Salt"));
+        using var pdb = new PasswordDeriveBytes(password, Encoding.UTF8.GetBytes("Salt"));
         using var aes = Aes.Create("AesManaged"); //new RijndaelManaged();
         aes.Padding = PaddingMode.ISO10126;
 

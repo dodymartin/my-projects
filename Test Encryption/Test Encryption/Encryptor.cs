@@ -31,7 +31,7 @@ public static class Encryptor
     {
         using var pdb = new PasswordDeriveBytes(password, Encoding.UTF8.GetBytes("Salt"));
         using var aes = Aes.Create("AesManaged"); //new RijndaelManaged();
-        //aes.Padding = paddingMode;
+        aes.Padding = paddingMode;
 
         using var encryptor = aes.CreateEncryptor(pdb.GetBytes(32), pdb.GetBytes(16));
         using var msEncrypt = new MemoryStream();
