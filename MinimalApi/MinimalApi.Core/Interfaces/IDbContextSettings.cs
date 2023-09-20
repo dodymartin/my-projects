@@ -1,10 +1,9 @@
 ﻿using Stratos.Core;
 
-namespace MinimalApi.Core
+namespace MinimalApi.Core;
+
+public interface IDbContextSettings
 {
-    public interface IDbContextSettings
-    {
-        IDatabase Database { get; }
-        string? DatabaseName { get; set; }
-    }
+    IDatabase Database { get; }
+    string? DatabaseName { get; set; }
 }

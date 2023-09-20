@@ -2,7 +2,7 @@
 
 namespace MinimalApi.Core;
 
-public class ApiCallUsageDto
+public class ApiCallUsageDom
 {
     public Guid Id { get; set; }
 
@@ -30,7 +30,7 @@ public class ApiCallUsageDto
 
     #region Cast Operators
 
-    public static explicit operator ApiCallUsage(ApiCallUsageDto from)
+    public static explicit operator ApiCallUsage(ApiCallUsageDom from)
     {
         return new ApiCallUsage
         {

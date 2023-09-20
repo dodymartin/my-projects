@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Carter;
+using Microsoft.AspNetCore.Mvc;
 using MinimalApi.Core;
 using MinimalApi.Shared;
 
 namespace MinimalApi.Endpoints;
 
-public static class ControllerEndpoints
+public class ControllerEndpoints : ICarterModule
 {
-    public static void UseControllerEndpoints(this RouteGroupBuilder parentGroup)
+    public void AddRoutes(IEndpointRouteBuilder parentGroup)
     {
         var group = parentGroup.MapGroup("/controller");
 

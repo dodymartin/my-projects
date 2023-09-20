@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Carter;
+using Microsoft.AspNetCore.Mvc;
 using MinimalApi.Core;
 using MinimalApi.Shared;
 
 namespace MinimalApi.Endpoints;
 
-public static class BaseUriEndpoints
+public class BaseUriEndpoints :ICarterModule
 {
-    public static void UseBaseUriEndpoints(this RouteGroupBuilder parentGroup)
+    public void AddRoutes(IEndpointRouteBuilder parentGroup)
     {
         var group = parentGroup.MapGroup("/base-uri");
 

@@ -5,14 +5,14 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
 		<PackageReference Include="Scrutor" Version="4.2.2" />
-		<PackageReference Include="Stratos.Core" Version="5.3.23167.2" />
-		<PackageReference Include="Stratos.Core.Data" Version="5.3.23167.2" />
-		<PackageReference Include="Stratos.Core.Query" Version="5.3.23167.2" />
-		<PackageReference Include="Stratos.Core.WebApi" Version="5.3.23167.2" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\stratos-core\Stratos Core Data\Stratos Core Data.csproj" />
+	  <ProjectReference Include="..\..\..\stratos-core\Stratos Core Query\Stratos Core Query.csproj" />
+	  <ProjectReference Include="..\..\..\stratos-core\Stratos Core Web Api\Stratos Core Web Api.csproj" />
+	  <ProjectReference Include="..\..\..\stratos-core\Stratos Core\Stratos Core.csproj" />
 	  <ProjectReference Include="..\MinimalApi.Shared\MinimalApi.Shared.csproj" />
 	</ItemGroup>
 </Project>

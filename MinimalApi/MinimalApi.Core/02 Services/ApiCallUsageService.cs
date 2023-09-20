@@ -17,7 +17,7 @@ public class ApiCallUsageService
         _apiCallUsageRepo = apiCallUsageRepo;
     }
 
-    public async Task<ApiCallUsageDto> CreateAsync(EndpointFilterInvocationContext context, EndpointFilterFactoryContext filterFactoryContext, long elapsedMilliseconds)
+    public async Task<ApiCallUsageDom> CreateAsync(EndpointFilterInvocationContext context, EndpointFilterFactoryContext filterFactoryContext, long elapsedMilliseconds)
     {
         var apiCallUsageDto = GetDto(context, filterFactoryContext, elapsedMilliseconds);
         _apiCallUsageRepo.Insert((ApiCallUsage)apiCallUsageDto);
@@ -27,9 +27,9 @@ public class ApiCallUsageService
 
     #region Private Methods
 
-    private static ApiCallUsageDto GetDto(EndpointFilterInvocationContext context, EndpointFilterFactoryContext filterFactoryContext, long elapsedMilliseconds)
+    private static ApiCallUsageDom GetDto(EndpointFilterInvocationContext context, EndpointFilterFactoryContext filterFactoryContext, long elapsedMilliseconds)
     {
-        var apiCallUsageDto = new ApiCallUsageDto
+        var apiCallUsageDto = new ApiCallUsageDom
         {
             ApiIpAddress = context.HttpContext.Connection.LocalIpAddress?.ToString(),
             ApiProcessId = Environment.ProcessId.ToString(),

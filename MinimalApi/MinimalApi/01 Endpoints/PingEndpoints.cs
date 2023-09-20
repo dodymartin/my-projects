@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Carter;
+using Microsoft.AspNetCore.Mvc;
 using MinimalApi.Core;
 using MinimalApi.Shared;
 
 namespace MinimalApi.Endpoints;
 
-public static class PingEndpoints
+public class PingEndpoints : ICarterModule
 {
-    public static void UsePingEndpoints(this RouteGroupBuilder parentGroup)
+    public void AddRoutes(IEndpointRouteBuilder parentGroup)
     {
         var group = parentGroup.MapGroup("/ping");
 

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Carter;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -177,11 +178,7 @@ try
         .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
         .AddEndpointFilter<CallUsageFilter>();
 
-    group.UseBaseUriEndpoints();
-    group.UseControllerEndpoints();
-    group.UseDatabaseEndpoints();
-    group.UsePingEndpoints();
-    group.UseVersionEndpoints();
+    group.MapCarter();
 
     #endregion
 
