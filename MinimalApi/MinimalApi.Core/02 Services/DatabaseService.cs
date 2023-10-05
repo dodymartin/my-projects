@@ -23,7 +23,7 @@ public class DatabaseService
     public async Task<string> GetDatabaseNameAsync(DatabaseRequest request)
     {
         var environmentType = (EnvironmentTypes)Enum.Parse(typeof(EnvironmentTypes), _appSettings.EnvironmentType);
-        return await _databaseRepo.GetDatabaseNameAsync(environmentType, request.FacilityId.Value);
+        return await _databaseRepo.GetDatabaseNameAsync(environmentType, new FacilityId(request.FacilityId.Value));
     }
 
     public async Task<string> GetParentDatabaseNameAsync(DatabaseRequest request)

@@ -2,9 +2,11 @@
 
 namespace MinimalApi.Core;
 
-public class Application : EntityBase<Application, int>
+public record ApplicationId(int Value);
+
+public class Application : EntityBase<Application, ApplicationId>
 {
-    public override int Id { get; set; }
+    public override ApplicationId Id { get; set; }
 
     public string ExeName { get; set; }
     public string FromDirectoryName { get; set; }

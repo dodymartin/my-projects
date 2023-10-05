@@ -11,14 +11,14 @@ public class ApplicationRepo : IApplicationRepo
         _dbContext = dbContext;
     }
 
-    public async Task<Application> GetApplicationAsync(int? applicationId, string applicationName)
+    public async Task<Application> GetApplicationAsync(ApplicationId? applicationId, string applicationName)
     {
-        if (applicationId.HasValue)
-            return await GetApplicationAsync(applicationId.Value);
+        if (applicationId is not null)
+            return await GetApplicationAsync(applicationId);
         return await GetApplicationAsync(applicationName);
     }
 
-    public async Task<string> GetMinimumVersionAsync(int applicationId)
+    public async Task<string> GetMinimumVersionAsync(ApplicationId applicationId)
     {
         return await
             (from a in _dbContext.Applications
@@ -29,7 +29,7 @@ public class ApplicationRepo : IApplicationRepo
 
     #region Private Methods
 
-    private async Task<Application> GetApplicationAsync(int applicationId)
+    private async Task<Application> GetApplicationAsync(ApplicationId applicationId)
     {
         return await
             (from a in _dbContext.Applications

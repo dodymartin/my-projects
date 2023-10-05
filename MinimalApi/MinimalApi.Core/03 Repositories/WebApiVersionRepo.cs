@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text;
+using Microsoft.EntityFrameworkCore;
 using MinimalApi.Shared;
 
 namespace MinimalApi.Core;
@@ -16,7 +17,7 @@ public class WebApiVersionRepo : IWebApiVersionRepo
     {
         return await
             (from wav in _dbContext.WebApiVersions
-                where wav.WebApi.ApplicationId == request.ApplicationId.Value
+                where wav.WebApi.ApplicationId == new ApplicationId(request.ApplicationId.Value)
                 && request.ApplicationVersion.StartsWith(wav.Version.Substring(0, request.ApplicationVersion.Length))
                 select $@"http{(wav.WebApi.UseHttps ? "s" : "")}://+:{wav.Port}")
             .FirstOrDefaultAsync();

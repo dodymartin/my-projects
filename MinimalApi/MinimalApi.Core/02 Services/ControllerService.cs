@@ -23,7 +23,11 @@ public class ControllerService
 
     public async Task<IList<ControllerUriResponse>> GetControllerUriInfoAsync(ControllerUriRequest request)
     {
-        var apln = await _applicationRepo.GetApplicationAsync(request.ApplicationId, request.ApplicationName);
+        var applicationId = default(ApplicationId);
+        if (request.ApplicationId is not null)
+            applicationId = new ApplicationId(request.ApplicationId.Value);
+
+        var apln = await _applicationRepo.GetApplicationAsync(applicationId, request.ApplicationName);
         if (apln is null)
         {
             if (request.ApplicationId.HasValue)
@@ -36,7 +40,7 @@ public class ControllerService
         if (request.FacilityId.HasValue)
         {
             return
-                (await _controllerUriFacilityInfoByApplicationRepo.GetControllerUrisAsync(environmentType, request.ControllerName, apln.Id, request.ApplicationVersion, request.FacilityId.Value))
+                (await _controllerUriFacilityInfoByApplicationRepo.GetControllerUrisAsync(environmentType, request.ControllerName, apln.Id, request.ApplicationVersion, new FacilityId(request.FacilityId.Value)))
                 .OrderBy(x => x.Order)
                 .Select(x => (ControllerUriResponse)x)
                 .ToList();

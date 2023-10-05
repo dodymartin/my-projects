@@ -12,7 +12,7 @@ public class ControllerUriInfoByApplicationRepo : IControllerUriInfoByApplicatio
         _dbContext = dbContext;
     }
 
-    public async Task<IList<ControllerUriInfoByApplication>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, int applicationId, string applicationVersion)
+    public async Task<IList<ControllerUriInfoByApplication>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, ApplicationId applicationId, string applicationVersion)
     {
         // This query looks at web_api_apln_endpt for what endpoints to return to the
         // particular application and application version
@@ -48,7 +48,7 @@ public class ControllerUriInfoByApplicationRepo : IControllerUriInfoByApplicatio
         and waae.fac_id is null
             {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
             {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)}
-            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId)} ";
+            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId.Value)} ";
 
         if (!string.IsNullOrEmpty(applicationVersion))
             sql += QueryUtilities.GetWhereSql("waae.apln_ver", applicationVersion);
@@ -92,7 +92,7 @@ public class ControllerUriInfoByApplicationRepo : IControllerUriInfoByApplicatio
                     else
                         wav.ver
                     end = '{applicationVersion}'
-                join cmn_mstr.apln a on a.apln_id = {applicationId}
+                join cmn_mstr.apln a on a.apln_id = {applicationId.Value}
                 join cmn_mstr.web_api_addr_xref waax on wa.web_api_id = waax.web_api_id
                 join cmn_mstr.web_api_addr waa on waax.web_api_addr_id = waa.web_api_addr_id
             where
@@ -108,7 +108,7 @@ public class ControllerUriInfoByApplicationRepo : IControllerUriInfoByApplicatio
         return endpoints;
     }
 
-    public async Task<IList<ControllerUriInfoByApplication>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, int applicationId, string applicationVersion, string machineName)
+    public async Task<IList<ControllerUriInfoByApplication>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, ApplicationId applicationId, string applicationVersion, string machineName)
     {
         // This query looks at web_api_apln_endpt for what endpoints to return to the
         // particular application and application version
@@ -139,7 +139,7 @@ public class ControllerUriInfoByApplicationRepo : IControllerUriInfoByApplicatio
             join cmn_mstr.apln a on waae.apln_id = a.apln_id
         where 1=1
             {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
-            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId)} ";
+            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId.Value)} ";
 
         if (!string.IsNullOrEmpty(applicationVersion))
             sql += QueryUtilities.GetWhereSql("waae.apln_ver", applicationVersion);

@@ -10,9 +10,13 @@ namespace MinimalApi.Infra
         {
             builder.ToTable("APLN_FAC", "CMN_MSTR");
 
-            builder.Property(p => p.Id).HasColumnName("APLN_FAC_ID");
-            builder.Property(p => p.ApplicationId).HasColumnName("APLN_ID");
-            builder.Property(p => p.FacilityId).HasColumnName("FAC_ID");
+            builder.HasKey(p => p.Id);
+            builder.Property(p => p.Id).HasColumnName("APLN_FAC_ID")
+                .HasConversion(id => id.Value, value => new ApplicationFacilityId(value));
+            builder.Property(p => p.ApplicationId).HasColumnName("APLN_ID")
+                .HasConversion(id => id.Value, value => new Core.ApplicationId(value));
+            builder.Property(p => p.FacilityId).HasColumnName("FAC_ID")
+                .HasConversion(id => id.Value, value => new FacilityId(value));
             builder.Property(p => p.MinimumAssemblyVersion).HasColumnName("MIN_ASMBLY_VER");
         }
     }

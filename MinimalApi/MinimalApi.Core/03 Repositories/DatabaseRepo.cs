@@ -22,7 +22,7 @@ public class DatabaseRepo : IDatabaseRepo
             .SingleOrDefaultAsync();
     }
 
-    public async Task<string> GetDatabaseNameAsync(EnvironmentTypes environmentType, int facilityId)
+    public async Task<string> GetDatabaseNameAsync(EnvironmentTypes environmentType, FacilityId facilityId)
     {
         return await
             (from d in _dbContext.Databases

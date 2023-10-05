@@ -2,6 +2,6 @@
 
 public class DatabaseFacility
 {
-    public string DatabaseId { get; set; }
-    public int FacilityId { get; set; }
+    public DatabaseId DatabaseId { get; set; }
+    public FacilityId FacilityId { get; set; }
 }

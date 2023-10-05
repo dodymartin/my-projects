@@ -10,7 +10,9 @@ internal class ApplicationConfiguration : IEntityTypeConfiguration<Application>
     {        
         builder.ToTable("APLN", "CMN_MSTR");
 
-        builder.Property(p => p.Id).HasColumnName("APLN_ID");
+        builder.HasKey(p => p.Id);
+        builder.Property(p => p.Id).HasColumnName("APLN_ID")
+                .HasConversion(id => id.Value, value => new Core.ApplicationId(value));
         builder.Property(p => p.ExeName).HasColumnName("EXE_NM");
         builder.Property(p => p.FromDirectoryName).HasColumnName("FROM_DIR_NM");
         builder.Property(p => p.Name).HasColumnName("NM");

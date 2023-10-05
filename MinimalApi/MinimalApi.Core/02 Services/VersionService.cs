@@ -15,13 +15,17 @@ public class VersionService
 
     public async Task<bool> CheckMinimumVersionAsync(VersionCheckMinimumRequest request)
     {
-        var apln = await _applicationRepo.GetApplicationAsync(request.ApplicationId, request.ApplicationName);
+        var applicationId = default(ApplicationId);
+        if (!request.ApplicationId.HasValue)
+            applicationId = new ApplicationId(request.ApplicationId.Value);
+
+        var apln = await _applicationRepo.GetApplicationAsync(applicationId, request.ApplicationName);
         if (apln is null)
             return await Task.FromResult(false);
 
         string minimumVersion;
         if (request.FacilityId.HasValue)
-            minimumVersion = await _applicationFacilityRepo.GetMinimumVersionAsync(apln.Id, request.FacilityId.Value);
+            minimumVersion = await _applicationFacilityRepo.GetMinimumVersionAsync(apln.Id, new FacilityId(request.FacilityId.Value));
         else
             minimumVersion = await _applicationRepo.GetMinimumVersionAsync(apln.Id);
 

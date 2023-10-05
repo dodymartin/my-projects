@@ -10,7 +10,9 @@ internal class ApiCallUsageConfiguration : IEntityTypeConfiguration<ApiCallUsage
     {
         builder.ToTable("SVC_CALL_USG", "CMN");
 
-        builder.Property(p => p.Id).HasColumnName("SVC_CALL_USG_GUID");
+        builder.HasKey(p => p.Id);
+        builder.Property(p => p.Id).HasColumnName("SVC_CALL_USG_GUID")
+                .HasConversion(id => id.Value, value => new ApiCallUsageId(value));
         builder.Property(p => p.BasicUsername).HasColumnName("BSIC_USR_NM");
         builder.Property(p => p.Body).HasColumnName("RQST_BLOB").HasColumnType("BLOB");
         builder.Property(p => p.CreateOrigin).HasColumnName("CRT_ORGN");

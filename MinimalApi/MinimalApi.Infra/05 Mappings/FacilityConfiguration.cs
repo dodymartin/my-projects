@@ -10,7 +10,8 @@ namespace MinimalApi.Infra
         {
             builder.ToTable("FAC", "CMN_MSTR");
 
-            builder.Property(p => p.Id).HasColumnName("FAC_ID");
+            builder.Property(p => p.Id).HasColumnName("FAC_ID")
+                .HasConversion(id => id.Value, value => new FacilityId(value));
             builder.Property(p => p.Name).HasColumnName("NM");
 
             builder.HasMany(e => e.Databases).WithMany(e => e.Facilities).UsingEntity<DatabaseFacility>();

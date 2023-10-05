@@ -11,7 +11,7 @@ public class ApplicationFacilityRepo : IApplicationFacilityRepo
         _dbContext = dbContext;
     }
 
-    public async Task<string> GetMinimumVersionAsync(int applicationId, int facilityId)
+    public async Task<string> GetMinimumVersionAsync(ApplicationId applicationId, FacilityId facilityId)
     {
         return await
             (from af in _dbContext.ApplicationFacilities

@@ -2,5 +2,5 @@
 
 public interface IApplicationFacilityRepo
 {
-    Task<string> GetMinimumVersionAsync(int applicationId, int facilityId);
+    Task<string> GetMinimumVersionAsync(ApplicationId applicationId, FacilityId facilityId);
 }

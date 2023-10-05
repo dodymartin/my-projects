@@ -10,12 +10,15 @@ namespace MinimalApi.Infra
         {
             builder.ToTable("DB", "CMN_MSTR");
 
-            builder.Property(p => p.Id).HasColumnName("DB_ID");
+            builder.HasKey(p => p.Id);
+            builder.Property(p => p.Id).HasColumnName("DB_ID")
+                .HasConversion(id => id.Value, value => new DatabaseId(value));
             builder.Property(p => p.EnvironmentType).HasColumnName("ENVIR_TP_ID");
             builder.Property(p => p.SchemaType).HasColumnName("DB_SCHEMA_TP_ID");
             builder.Property(p => p.Type).HasColumnName("DB_TP_ID");
             builder.Property(p => p.Name).HasColumnName("NM");
-            builder.Property(p => p.ParentId).HasColumnName("PRNT_DB_ID");
+            builder.Property(p => p.ParentId).HasColumnName("PRNT_DB_ID")
+                .HasConversion(id => id.Value, value => new DatabaseId(value));
 
             builder.HasMany(e => e.Facilities).WithMany(e => e.Databases).UsingEntity<DatabaseFacility>();
         }

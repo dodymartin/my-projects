@@ -4,7 +4,7 @@ namespace MinimalApi.Core;
 
 public class ApiCallUsageDom
 {
-    public Guid Id { get; set; }
+    public ApiCallUsageId Id { get; set; }
 
     public string BasicUsername { get; set; }
     public byte[] Body { get; set; }

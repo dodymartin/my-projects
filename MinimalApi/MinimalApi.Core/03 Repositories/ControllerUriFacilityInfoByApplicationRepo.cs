@@ -12,7 +12,7 @@ public class ControllerUriFacilityInfoByApplicationRepo : IControllerUriFacility
         _dbContext = dbContext;
     }
 
-    public async Task<IList<ControllerUriFacilityInfoByApplication>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, int applicationId, string applicationVersion, int facilityId)
+    public async Task<IList<ControllerUriFacilityInfoByApplication>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, ApplicationId applicationId, string applicationVersion, FacilityId facilityId)
     {
         // This query looks at web_api_apln_endpt for what endpoints to return to the
         // particular application and application version by facility
@@ -48,8 +48,8 @@ public class ControllerUriFacilityInfoByApplicationRepo : IControllerUriFacility
             waa.ord is not null
             {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
             {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)}
-            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId)}
-            {QueryUtilities.GetWhereSql("waae.fac_id", facilityId)} ";
+            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId.Value)}
+            {QueryUtilities.GetWhereSql("waae.fac_id", facilityId.Value)} ";
 
         if (!string.IsNullOrEmpty(applicationVersion))
             sql += QueryUtilities.GetWhereSql("waae.apln_ver", applicationVersion);
@@ -93,10 +93,10 @@ public class ControllerUriFacilityInfoByApplicationRepo : IControllerUriFacility
                     else
                         wav.ver
                     end = '{applicationVersion}'
-                join cmn_mstr.web_api_addr_fac waaf on waaf.fac_id = {facilityId}
+                join cmn_mstr.web_api_addr_fac waaf on waaf.fac_id = {facilityId.Value}
                 join cmn_mstr.web_api_addr waa on waaf.web_api_addr_id = waa.web_api_addr_id and waa.use_https = case when wa.use_https = 1 then 1 else waa.use_https end
                 join cmn_mstr.web_api_addr_xref waax on wa.web_api_id = waax.web_api_id and waa.web_api_addr_id = waax.web_api_addr_id
-                join cmn_mstr.apln a on a.apln_id = {applicationId}
+                join cmn_mstr.apln a on a.apln_id = {applicationId.Value}
             where
                 waa.ord is not null
                 {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}

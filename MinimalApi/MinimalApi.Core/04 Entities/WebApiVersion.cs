@@ -2,12 +2,14 @@
 
 namespace MinimalApi.Core;
 
-public class WebApiVersion : EntityBase<WebApiVersion, int>
+public record WebApiVersionId(int Value);
+
+public class WebApiVersion : EntityBase<WebApiVersion, WebApiVersionId>
 {
-    public override int Id { get; set; }
+    public override WebApiVersionId Id { get; set; }
 
     public int Port { get; set; }
     public string Version { get; set; }
-    public int WebApiId { get; set; }
+    public WebApiId WebApiId { get; set; }
     public WebApi WebApi { get; set; }
 }

@@ -2,10 +2,12 @@
 
 namespace MinimalApi.Core;
 
-public class WebApi : EntityBase<WebApi, int>
-{
-    public override int Id { get; set; }
+public record WebApiId(int Value);
 
-    public int ApplicationId { get; set; }
+public class WebApi : EntityBase<WebApi, WebApiId>
+{
+    public override WebApiId Id { get; set; }
+
+    public ApplicationId ApplicationId { get; set; }
     public bool UseHttps { get; set; }
 }

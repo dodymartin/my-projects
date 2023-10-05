@@ -1,8 +1,12 @@
-﻿namespace MinimalApi.Core;
+﻿using Stratos.Core;
 
-public class Facility
+namespace MinimalApi.Core;
+
+public record FacilityId(int Value);
+
+public class Facility : EntityBase<Facility, FacilityId>
 {
-    public int Id { get; set; }
+    public override FacilityId Id { get; set; }
 
     public string Name { get; set; }
 

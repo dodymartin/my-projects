@@ -2,11 +2,13 @@
 
 namespace MinimalApi.Core;
 
-public class ApplicationVersion : EntityBase<ApplicationVersion, int>
-{
-    public override int Id { get; set; }
+public record ApplicationVersionId(int Value);
 
-    public int ApplicationId { get; set; }
+public class ApplicationVersion : EntityBase<ApplicationVersion, ApplicationVersionId>
+{
+    public override ApplicationVersionId Id { get; set; }
+
+    public ApplicationId ApplicationId { get; set; }
     public string FromDirectoryName { get; set; }
     public string Version { get; set; }
 }

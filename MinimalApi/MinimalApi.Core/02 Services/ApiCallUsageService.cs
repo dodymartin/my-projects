@@ -33,7 +33,7 @@ public class ApiCallUsageService
         {
             ApiIpAddress = context.HttpContext.Connection.LocalIpAddress?.ToString(),
             ApiProcessId = Environment.ProcessId.ToString(),
-            Id = Guid.NewGuid(),
+            Id = new ApiCallUsageId(Guid.NewGuid()),
             MethodName = filterFactoryContext.MethodInfo.Name,
             RequestIpAddress = context.HttpContext.Connection.RemoteIpAddress?.ToString(),
             RequestProcessId = context.HttpContext.Request.Headers["RemoteProcessId"],

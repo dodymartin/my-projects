@@ -2,13 +2,15 @@
 
 namespace MinimalApi.Core;
 
-public class ApplicationFacility : EntityBase<ApplicationFacility, int>
-{
-    public override int Id { get; set; }
+public record ApplicationFacilityId(int Value);
 
-    public int ApplicationId { get; set; }
+public class ApplicationFacility : EntityBase<ApplicationFacility, ApplicationFacilityId>
+{
+    public override ApplicationFacilityId Id { get; set; }
+
+    public ApplicationId ApplicationId { get; set; }
     public Application Application { get; set; }
-    public int FacilityId { get; set; }
+    public FacilityId FacilityId { get; set; }
     public Facility Facility { get; set; }
     public string MinimumAssemblyVersion { get; set; }
 }

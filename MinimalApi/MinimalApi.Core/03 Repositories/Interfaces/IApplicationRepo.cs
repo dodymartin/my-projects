@@ -2,7 +2,7 @@
 {
     public interface IApplicationRepo
     {
-        Task<Application> GetApplicationAsync(int? applicationId, string applicationName);
-        Task<string> GetMinimumVersionAsync(int applicationId);
+        Task<Application> GetApplicationAsync(ApplicationId? applicationId, string applicationName);
+        Task<string> GetMinimumVersionAsync(ApplicationId applicationId);
     }
 }

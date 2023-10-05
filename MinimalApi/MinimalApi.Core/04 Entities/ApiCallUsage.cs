@@ -3,9 +3,11 @@ using Stratos.Core;
 
 namespace MinimalApi.Core;
 
-public class ApiCallUsage : EntityBase<ApiCallUsage, Guid>
+public record ApiCallUsageId(Guid Value);
+
+public class ApiCallUsage : EntityBase<ApiCallUsage, ApiCallUsageId>
 {
-    public override Guid Id { get; set; }
+    public override ApiCallUsageId Id { get; set; }
 
     public string BasicUsername { get; set; }
     public byte[] Body { get; set; }
