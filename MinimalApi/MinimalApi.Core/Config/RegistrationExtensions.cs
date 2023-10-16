@@ -1,14 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public static class RegistrationExtensions
 {
-    public static void AddCoreServices(this IServiceCollection services)
+    public static void AddApplicationConfiguration(this IServiceCollection services)
     {
-        services.TryAddScoped<IBaseCrudRepo<ApiCallUsage, Guid>, BaseCrudRepo<ApiCallUsage, Guid>>();
-
         // Register all *Repo classes to DI
         services.Scan(scan => scan
             .FromCallingAssembly()

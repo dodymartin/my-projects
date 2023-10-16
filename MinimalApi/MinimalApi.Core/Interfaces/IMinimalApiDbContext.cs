@@ -1,6 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MinimalApi.Dom.ApiCallUsages;
+using MinimalApi.Dom.Applications;
+using MinimalApi.Dom.Applications.Entities;
+using MinimalApi.Dom.Databases;
+using MinimalApi.Dom.WebApis;
+using MinimalApi.Dom.WebApis.Entities;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public interface IMinimalApiDbContext
 {

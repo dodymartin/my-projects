@@ -5,8 +5,10 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using MinimalApi.Dom.ApiCallUsages;
+using MinimalApi.App.Interfaces;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public class ApiCallUsageService
 {
@@ -33,7 +35,6 @@ public class ApiCallUsageService
         {
             ApiIpAddress = context.HttpContext.Connection.LocalIpAddress?.ToString(),
             ApiProcessId = Environment.ProcessId.ToString(),
-            Id = new ApiCallUsageId(Guid.NewGuid()),
             MethodName = filterFactoryContext.MethodInfo.Name,
             RequestIpAddress = context.HttpContext.Connection.RemoteIpAddress?.ToString(),
             RequestProcessId = context.HttpContext.Request.Headers["RemoteProcessId"],

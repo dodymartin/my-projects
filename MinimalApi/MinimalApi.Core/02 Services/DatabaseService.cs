@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
+using MinimalApi.App.Interfaces;
+using MinimalApi.Dom.Enumerations;
+using MinimalApi.Dom.Facilities.ValueObjects;
 using MinimalApi.Shared;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public class DatabaseService
 {
@@ -23,7 +26,7 @@ public class DatabaseService
     public async Task<string> GetDatabaseNameAsync(DatabaseRequest request)
     {
         var environmentType = (EnvironmentTypes)Enum.Parse(typeof(EnvironmentTypes), _appSettings.EnvironmentType);
-        return await _databaseRepo.GetDatabaseNameAsync(environmentType, new FacilityId(request.FacilityId.Value));
+        return await _databaseRepo.GetDatabaseNameAsync(environmentType, FacilityId.Create(request.FacilityId.Value));
     }
 
     public async Task<string> GetParentDatabaseNameAsync(DatabaseRequest request)

@@ -1,6 +1,6 @@
 ﻿using Stratos.Core;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public interface IDbContextSettings
 {

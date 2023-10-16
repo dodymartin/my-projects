@@ -1,6 +1,9 @@
-﻿using MinimalApi.Shared;
+﻿using MinimalApi.App.Interfaces;
+using MinimalApi.Dom.Facilities.ValueObjects;
+using MinimalApi.Shared;
+using ApplicationId = MinimalApi.Dom.Applications.ValueObjects.ApplicationId;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public class VersionService
 {
@@ -17,7 +20,7 @@ public class VersionService
     {
         var applicationId = default(ApplicationId);
         if (!request.ApplicationId.HasValue)
-            applicationId = new ApplicationId(request.ApplicationId.Value);
+            applicationId = ApplicationId.Create(request.ApplicationId.Value);
 
         var apln = await _applicationRepo.GetApplicationAsync(applicationId, request.ApplicationName);
         if (apln is null)
@@ -25,9 +28,9 @@ public class VersionService
 
         string minimumVersion;
         if (request.FacilityId.HasValue)
-            minimumVersion = await _applicationFacilityRepo.GetMinimumVersionAsync(apln.Id, new FacilityId(request.FacilityId.Value));
+            minimumVersion = await _applicationFacilityRepo.GetMinimumVersionAsync(ApplicationId.Create(apln.Id.Value), FacilityId.Create(request.FacilityId.Value));
         else
-            minimumVersion = await _applicationRepo.GetMinimumVersionAsync(apln.Id);
+            minimumVersion = await _applicationRepo.GetMinimumVersionAsync(ApplicationId.Create(apln.Id.Value));
 
         return await Task.FromResult(CheckVersion(minimumVersion, request.ApplicationVersion));
     }

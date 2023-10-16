@@ -1,4 +1,8 @@
-﻿namespace MinimalApi.Core;
+﻿using MinimalApi.Dom.Enumerations;
+using MinimalApi.Dom.Facilities.ValueObjects;
+using ApplicationId = MinimalApi.Dom.Applications.ValueObjects.ApplicationId;
+
+namespace MinimalApi.App.Interfaces;
 
 public interface IControllerUriFacilityInfoByApplicationRepo
 {

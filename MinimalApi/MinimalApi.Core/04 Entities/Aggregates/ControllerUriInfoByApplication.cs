@@ -1,7 +1,8 @@
+using MinimalApi.Dom.Enumerations;
 using MinimalApi.Shared;
 using Stratos.Core;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public class ControllerUriInfoByApplication : EntityBase<ControllerUriInfoByApplication, Guid>
 {

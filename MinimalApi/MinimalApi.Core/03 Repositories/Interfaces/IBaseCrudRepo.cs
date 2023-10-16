@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App.Interfaces;
 
 public interface IBaseCrudRepo<TEntity, TKey> : IDisposable
 {

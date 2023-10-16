@@ -1,4 +1,4 @@
-﻿namespace MinimalApi.Core;
+﻿namespace MinimalApi.App.Interfaces;
 
 public interface IPingUriRepo
 {

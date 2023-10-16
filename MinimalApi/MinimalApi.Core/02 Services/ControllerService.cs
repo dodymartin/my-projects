@@ -1,7 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
+using MinimalApi.App.Interfaces;
+using MinimalApi.Dom.Enumerations;
+using MinimalApi.Dom.Facilities.ValueObjects;
 using MinimalApi.Shared;
+using ApplicationId = MinimalApi.Dom.Applications.ValueObjects.ApplicationId;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public class ControllerService
 {
@@ -25,7 +29,7 @@ public class ControllerService
     {
         var applicationId = default(ApplicationId);
         if (request.ApplicationId is not null)
-            applicationId = new ApplicationId(request.ApplicationId.Value);
+            applicationId = ApplicationId.Create(request.ApplicationId.Value);
 
         var apln = await _applicationRepo.GetApplicationAsync(applicationId, request.ApplicationName);
         if (apln is null)
@@ -40,7 +44,7 @@ public class ControllerService
         if (request.FacilityId.HasValue)
         {
             return
-                (await _controllerUriFacilityInfoByApplicationRepo.GetControllerUrisAsync(environmentType, request.ControllerName, apln.Id, request.ApplicationVersion, new FacilityId(request.FacilityId.Value)))
+                (await _controllerUriFacilityInfoByApplicationRepo.GetControllerUrisAsync(environmentType, request.ControllerName, ApplicationId.Create(apln.Id.Value), request.ApplicationVersion, FacilityId.Create(request.FacilityId.Value)))
                 .OrderBy(x => x.Order)
                 .Select(x => (ControllerUriResponse)x)
                 .ToList();
@@ -48,7 +52,7 @@ public class ControllerService
         else if (!string.IsNullOrEmpty(request.MachineName))
         {
             return
-                (await _controllerUriInfoByApplicationRepo.GetControllerUrisAsync(environmentType, request.ControllerName, apln.Id, request.ApplicationVersion, request.MachineName))
+                (await _controllerUriInfoByApplicationRepo.GetControllerUrisAsync(environmentType, request.ControllerName, ApplicationId.Create(apln.Id.Value), request.ApplicationVersion, request.MachineName))
                 .OrderBy(x => x.Order)
                 .Select(x => (ControllerUriResponse)x)
                 .ToList();
@@ -56,7 +60,7 @@ public class ControllerService
         else
         {
             return
-                (await _controllerUriInfoByApplicationRepo.GetControllerUrisAsync(environmentType, request.ControllerName, apln.Id, request.ApplicationVersion))
+                (await _controllerUriInfoByApplicationRepo.GetControllerUrisAsync(environmentType, request.ControllerName, ApplicationId.Create(apln.Id.Value), request.ApplicationVersion))
                 .OrderBy(x => x.Order)
                 .Select(x => (ControllerUriResponse)x)
                 .ToList();

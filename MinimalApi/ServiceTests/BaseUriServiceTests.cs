@@ -1,4 +1,5 @@
-using MinimalApi.Core;
+using MinimalApi.App;
+using MinimalApi.App.Interfaces;
 using MinimalApi.Shared;
 using Moq;
 

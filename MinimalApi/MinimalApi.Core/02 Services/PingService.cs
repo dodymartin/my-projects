@@ -1,6 +1,7 @@
-﻿using MinimalApi.Shared;
+﻿using MinimalApi.App.Interfaces;
+using MinimalApi.Shared;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public class PingService
 {

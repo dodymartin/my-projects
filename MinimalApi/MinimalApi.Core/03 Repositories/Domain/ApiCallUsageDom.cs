@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using MinimalApi.Dom.ApiCallUsages;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App;
 
 public class ApiCallUsageDom
 {
-    public ApiCallUsageId Id { get; set; }
-
     public string BasicUsername { get; set; }
     public byte[] Body { get; set; }
     public string CreateOrigin { get; set; }
@@ -44,7 +43,6 @@ public class ApiCallUsageDom
             CreateOrigin = from.CreateOrigin,
             ElapsedMilliseconds = from.ElapsedMilliseconds,
             HasAuthorizationHeader = from.HasAuthorizationHeader,
-            Id = from.Id,
             MethodName = from.MethodName,
             RequestApplicationExeName = from.RequestApplicationExeName,
             RequestApplicationVersion = from.RequestApplicationVersion,

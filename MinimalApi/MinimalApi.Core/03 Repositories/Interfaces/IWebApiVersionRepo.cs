@@ -1,8 +1,8 @@
 ﻿using MinimalApi.Shared;
 
-namespace MinimalApi.Core;
+namespace MinimalApi.App.Interfaces;
 
 public interface IWebApiVersionRepo
 {
-    Task<string> GetBaseUriAsync(BaseUriRequest request);
+    Task<string?> GetBaseUriAsync(BaseUriRequest request);
 }

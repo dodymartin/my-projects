@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Options;
-using MinimalApi.Core;
+using MinimalApi.App;
 
 namespace MinimalApi;
 
