@@ -31,16 +31,18 @@
 	<ItemGroup>
 		<!--<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.5" />-->
 		<PackageReference Include="Carter" Version="7.1.0" />
+		<PackageReference Include="Mapster" Version="7.4.0" />
+		<PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
 		<PackageReference Include="NLog" Version="5.2.3" />
 		<PackageReference Include="NLog.Extensions.Logging" Version="5.3.3" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\stratos-core\Stratos Core Data\Stratos Core Data.csproj" />
-	  <ProjectReference Include="..\..\..\stratos-core\Stratos Core\Stratos Core.csproj" />
-	  <ProjectReference Include="..\MinimalApi.Core\MinimalApi.App.csproj" />
-	  <ProjectReference Include="..\MinimalApi.Infra\MinimalApi.Infra.csproj" />
-	  <ProjectReference Include="..\MinimalApi.Shared\MinimalApi.Dom.csproj" />
+		<ProjectReference Include="..\..\..\stratos-core\Stratos Core Data\Stratos Core Data.csproj" />
+		<ProjectReference Include="..\..\..\stratos-core\Stratos Core\Stratos Core.csproj" />
+		<ProjectReference Include="..\MinimalApi.Core\MinimalApi.App.csproj" />
+		<ProjectReference Include="..\MinimalApi.Infra\MinimalApi.Infra.csproj" />
+		<ProjectReference Include="..\MinimalApi.Shared\MinimalApi.Dom.csproj" />
 	</ItemGroup>
 
 </Project>

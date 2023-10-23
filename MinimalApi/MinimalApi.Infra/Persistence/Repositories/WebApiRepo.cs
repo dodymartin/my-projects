@@ -1,0 +1,300 @@
+﻿using Microsoft.EntityFrameworkCore;
+using MinimalApi.App;
+using MinimalApi.App.Interfaces;
+using MinimalApi.Dom.Enumerations;
+using MinimalApi.Dom.WebApis.Dtos;
+using Stratos.Core.Query;
+
+namespace MinimalApi.Infra.Persistence.Repositories;
+
+public class WebApiRepo : IWebApiRepo
+{
+    private readonly IMinimalApiDbContext _dbContext;
+
+    public WebApiRepo(IMinimalApiDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task<IList<ControllerUriInfoByApplicationDto>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, int applicationId, string applicationVersion, CancellationToken cancellationToken)
+    {
+        // This query looks at web_api_apln_endpt for what endpoints to return to the
+        // particular application and application version
+        var sql = $@"
+        select distinct
+            waae.apln_id {nameof(ControllerUriInfoByApplicationDto.ApplicationId)},
+            a.nm {nameof(ControllerUriInfoByApplicationDto.ApplicationName)},
+            waae.apln_ver {nameof(ControllerUriInfoByApplicationDto.ApplicationVersion)},
+            waa.envir_tp_id {nameof(ControllerUriInfoByApplicationDto.EnvironmentType)},
+            wa.use_https {nameof(ControllerUriInfoByApplicationDto.UseHttps)}, 
+            null {nameof(ControllerUriInfoByApplicationDto.MachineName)},  
+            waa.addr {nameof(ControllerUriInfoByApplicationDto.Address)}, 
+            wav.port {nameof(ControllerUriInfoByApplicationDto.Port)}, 
+            wac.uri_nm {nameof(ControllerUriInfoByApplicationDto.UriName)},
+            case
+                when instr(wav.ver,'.',1,2) is not null
+                then substr(wav.ver,1,instr(wav.ver,'.',1,2)-1)
+            else
+                wav.ver
+            end {nameof(ControllerUriInfoByApplicationDto.Version)},
+            waa.ord {nameof(ControllerUriInfoByApplicationDto.Order)}
+        from
+            cmn_mstr.web_api_ctlr wac
+            join cmn_mstr.web_api_ver wav on wac.web_api_id = wav.web_api_id
+            join cmn_mstr.web_api_apln_endpt waae on wav.web_api_ver_id = waae.web_api_ver_id
+            join cmn_mstr.web_api wa on wav.web_api_id = wa.web_api_id
+            join cmn_mstr.apln a on waae.apln_id = a.apln_id
+            join cmn_mstr.web_api_addr_xref waax on wa.web_api_id = waax.web_api_id
+            join cmn_mstr.web_api_addr waa on waax.web_api_addr_id = waa.web_api_addr_id
+        where
+            waa.is_dflt = 1
+        and waae.fac_id is null
+            {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
+            {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)}
+            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId)} ";
+
+        if (!string.IsNullOrEmpty(applicationVersion))
+            sql += QueryUtilities.GetWhereSql("waae.apln_ver", applicationVersion);
+
+        var endpoints = await
+            _dbContext.Database
+            .SqlQueryRaw<ControllerUriInfoByApplicationDto>(sql)
+            .ToListAsync(cancellationToken);
+
+        if (!endpoints.Any())
+        {
+            // This query will return the endpoints for a web api the same version
+            // as the application; and therefore, no need for records
+            // in web_api_apln_endpt
+            sql = $@"
+            select distinct
+                a.apln_id {nameof(ControllerUriInfoByApplicationDto.ApplicationId)},
+                a.nm {nameof(ControllerUriInfoByApplicationDto.ApplicationName)},
+                '{applicationVersion}' {nameof(ControllerUriInfoByApplicationDto.ApplicationVersion)},
+                waa.envir_tp_id {nameof(ControllerUriInfoByApplicationDto.EnvironmentType)},
+                wa.use_https {nameof(ControllerUriInfoByApplicationDto.UseHttps)},
+                null {nameof(ControllerUriInfoByApplicationDto.MachineName)},
+                waa.addr {nameof(ControllerUriInfoByApplicationDto.Address)}, 
+                wav.port {nameof(ControllerUriInfoByApplicationDto.Port)}, 
+                wac.uri_nm {nameof(ControllerUriInfoByApplicationDto.UriName)}, 
+                case
+                    when instr(wav.ver,'.',1,2) is not null
+                    then substr(wav.ver,1,instr(wav.ver,'.',1,2)-1)
+                else
+                    wav.ver
+                end {nameof(ControllerUriInfoByApplicationDto.Version)},
+                waa.ord {nameof(ControllerUriInfoByApplicationDto.Order)}
+            from
+                cmn_mstr.web_api_ctlr wac
+                join cmn_mstr.web_api wa on wac.web_api_id = wa.web_api_id
+                join cmn_mstr.web_api_ver wav on wa.web_api_id = wav.web_api_id and
+                    case
+                        when instr(wav.ver,'.',1,2) is not null
+                        then substr(wav.ver,1,instr(wav.ver,'.',1,2)-1)
+                    else
+                        wav.ver
+                    end = '{applicationVersion}'
+                join cmn_mstr.apln a on a.apln_id = {applicationId}
+                join cmn_mstr.web_api_addr_xref waax on wa.web_api_id = waax.web_api_id
+                join cmn_mstr.web_api_addr waa on waax.web_api_addr_id = waa.web_api_addr_id
+            where
+                waa.is_dflt = 1
+                {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
+                {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)} ";
+
+            endpoints = await
+                _dbContext.Database
+                .SqlQueryRaw<ControllerUriInfoByApplicationDto>(sql)
+                .ToListAsync(cancellationToken);
+        }
+        return endpoints;
+    }
+
+    public async Task<IList<ControllerUriInfoByApplicationDto>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, int applicationId, string applicationVersion, string machineName, CancellationToken cancellationToken)
+    {
+        // This query looks at web_api_apln_endpt for what endpoints to return to the
+        // particular application and application version
+        var sql = $@"
+        select distinct
+            waae.apln_id {nameof(ControllerUriInfoByApplicationDto.ApplicationId)},
+            a.nm {nameof(ControllerUriInfoByApplicationDto.ApplicationName)},
+            waae.apln_ver {nameof(ControllerUriInfoByApplicationDto.ApplicationVersion)},
+            {(int)environmentType} {nameof(ControllerUriInfoByApplicationDto.EnvironmentType)},
+            wa.use_https {nameof(ControllerUriInfoByApplicationDto.UseHttps)},
+            '{machineName}' {nameof(ControllerUriInfoByApplicationDto.MachineName)},
+            '{machineName}' {nameof(ControllerUriInfoByApplicationDto.Address)}, 
+            wav.port {nameof(ControllerUriInfoByApplicationDto.Port)}, 
+            wac.uri_nm {nameof(ControllerUriInfoByApplicationDto.UriName)},
+            case
+                when instr(wav.ver,'.',1,2) is not null
+                then substr(wav.ver,1,instr(wav.ver,'.',1,2)-1)
+            else
+                wav.ver
+            end {nameof(ControllerUriInfoByApplicationDto.Version)},
+            1 {nameof(ControllerUriInfoByApplicationDto.Order)}
+        from
+            cmn_mstr.web_api_ctlr wac
+            join cmn_mstr.web_api_ver wav on wac.web_api_id = wav.web_api_id
+            join cmn_mstr.web_api_apln_endpt waae on wav.web_api_ver_id = waae.web_api_ver_id
+            join cmn_mstr.web_api wa on wav.web_api_id = wa.web_api_id
+            join cmn_mstr.apln a on waae.apln_id = a.apln_id
+        where 1=1
+            {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
+            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId)} ";
+
+        if (!string.IsNullOrEmpty(applicationVersion))
+            sql += QueryUtilities.GetWhereSql("waae.apln_ver", applicationVersion);
+
+        return await
+            _dbContext.Database
+            .SqlQueryRaw<ControllerUriInfoByApplicationDto>(sql)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IList<ControllerUriFacilityInfoByApplicationDto>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, int applicationId, string applicationVersion, int facilityId, CancellationToken cancellationToken)
+    {
+        // This query looks at web_api_apln_endpt for what endpoints to return to the
+        // particular application and application version by facility
+        var sql = $@"
+        select distinct
+            waae.apln_id {nameof(ControllerUriFacilityInfoByApplicationDto.ApplicationId)},
+            a.nm {nameof(ControllerUriFacilityInfoByApplicationDto.ApplicationName)},
+            waae.apln_ver {nameof(ControllerUriFacilityInfoByApplicationDto.ApplicationVersion)},
+            waa.envir_tp_id {nameof(ControllerUriFacilityInfoByApplicationDto.EnvironmentType)},
+            wa.use_https {nameof(ControllerUriFacilityInfoByApplicationDto.UseHttps)}, 
+            waa.addr {nameof(ControllerUriFacilityInfoByApplicationDto.Address)}, 
+            wav.port {nameof(ControllerUriFacilityInfoByApplicationDto.Port)}, 
+            wac.uri_nm {nameof(ControllerUriFacilityInfoByApplicationDto.UriName)},
+            case
+                when instr(wav.ver,'.',1,2) is not null
+                then substr(wav.ver,1,instr(wav.ver,'.',1,2)-1)
+            else
+                wav.ver
+            end {nameof(ControllerUriFacilityInfoByApplicationDto.Version)},
+            waa.ord {nameof(ControllerUriFacilityInfoByApplicationDto.Order)},
+            waaf.fac_id {nameof(ControllerUriFacilityInfoByApplicationDto.FacilityId)}
+        from
+            cmn_mstr.web_api_ctlr wac
+            join cmn_mstr.web_api_ver wav on wac.web_api_id = wav.web_api_id
+            join cmn_mstr.web_api_apln_endpt waae on wav.web_api_ver_id = waae.web_api_ver_id
+            join cmn_mstr.web_api wa on wav.web_api_id = wa.web_api_id
+            join cmn_mstr.web_api_addr_fac waaf on waae.fac_id = waaf.fac_id
+            join cmn_mstr.web_api_addr waa on waaf.web_api_addr_id = waa.web_api_addr_id and waa.use_https = case when wa.use_https = 1 then 1 else waa.use_https end
+            join cmn_mstr.web_api_addr_xref waax on wa.web_api_id = waax.web_api_id and waa.web_api_addr_id = waax.web_api_addr_id
+            join cmn_mstr.apln a on waae.apln_id = a.apln_id
+        where
+            waa.ord is not null
+            {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
+            {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)}
+            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId)}
+            {QueryUtilities.GetWhereSql("waae.fac_id", facilityId)} ";
+
+        if (!string.IsNullOrEmpty(applicationVersion))
+            sql += QueryUtilities.GetWhereSql("waae.apln_ver", applicationVersion);
+
+        var endpoints = await
+            _dbContext.Database
+            .SqlQueryRaw<ControllerUriFacilityInfoByApplicationDto>(sql)
+            .ToListAsync(cancellationToken);
+
+        if (!endpoints.Any())
+        {
+            // This query will return the endpoints for a web api the same version
+            // as the application by facility; and therefore, no need for records
+            // in web_api_apln_endpt
+            sql = $@"
+            select distinct
+                a.apln_id {nameof(ControllerUriFacilityInfoByApplicationDto.ApplicationId)},
+                a.nm {nameof(ControllerUriFacilityInfoByApplicationDto.ApplicationName)},
+                '{applicationVersion}' {nameof(ControllerUriFacilityInfoByApplicationDto.ApplicationVersion)},
+                waa.envir_tp_id {nameof(ControllerUriFacilityInfoByApplicationDto.EnvironmentType)},
+                wa.use_https {nameof(ControllerUriFacilityInfoByApplicationDto.UseHttps)}, 
+                waa.addr {nameof(ControllerUriFacilityInfoByApplicationDto.Address)}, 
+                wav.port {nameof(ControllerUriFacilityInfoByApplicationDto.Port)}, 
+                wac.uri_nm {nameof(ControllerUriFacilityInfoByApplicationDto.UriName)}, 
+                case
+                    when instr(wav.ver,'.',1,2) is not null
+                    then substr(wav.ver,1,instr(wav.ver,'.',1,2)-1)
+                else
+                    wav.ver
+                end {nameof(ControllerUriFacilityInfoByApplicationDto.Version)},
+                waa.ord {nameof(ControllerUriFacilityInfoByApplicationDto.Order)},
+                waaf.fac_id {nameof(ControllerUriFacilityInfoByApplicationDto.FacilityId)}
+            from
+                cmn_mstr.web_api_ctlr wac
+                join cmn_mstr.web_api wa on wac.web_api_id = wa.web_api_id
+                join cmn_mstr.web_api_ver wav on wa.web_api_id = wav.web_api_id and
+                    case
+                        when instr(wav.ver,'.',1,2) is not null
+                        then substr(wav.ver,1,instr(wav.ver,'.',1,2)-1)
+                    else
+                        wav.ver
+                    end = '{applicationVersion}'
+                join cmn_mstr.web_api_addr_fac waaf on waaf.fac_id = {facilityId}
+                join cmn_mstr.web_api_addr waa on waaf.web_api_addr_id = waa.web_api_addr_id and waa.use_https = case when wa.use_https = 1 then 1 else waa.use_https end
+                join cmn_mstr.web_api_addr_xref waax on wa.web_api_id = waax.web_api_id and waa.web_api_addr_id = waax.web_api_addr_id
+                join cmn_mstr.apln a on a.apln_id = {applicationId}
+            where
+                waa.ord is not null
+                {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
+                {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)} ";
+
+            endpoints = await
+                _dbContext.Database
+                .SqlQueryRaw<ControllerUriFacilityInfoByApplicationDto>(sql)
+                .ToListAsync(cancellationToken);
+        }
+        return endpoints;
+    }
+
+    public async Task<WebApiDto?> GetOneVersionAsync(int id, string applicationVersion, CancellationToken cancellationToken)
+    {
+        return await
+        (from wa in _dbContext.WebApis
+         where wa.ApplicationId.Value == id
+         && wa.Versions.Any(v => applicationVersion.StartsWith(v.Version.Substring(0, applicationVersion.Length)))
+         select new WebApiDto
+         {
+             ApplicationId = wa.ApplicationId.Value,
+             Id = wa.Id.Value,
+             UseHttps = wa.UseHttps,
+             Versions = wa.Versions.Where(v => applicationVersion.StartsWith(v.Version.Substring(0, applicationVersion.Length))).ToList()
+         })
+        .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<IList<string>> GetPingUrisAsync(string applicationName, string applicationVersion, CancellationToken cancellationToken)
+    {
+        var sql = $@"
+        select
+            case when wa.use_https = 1 then
+                'https://localhost:'||wav.port||'/api/'||wac.uri_nm||'/ping'
+            else
+                'https://localhost:'||wav.port||'/api/'||wac.uri_nm||'/ping'
+            end
+        from
+            cmn_mstr.apln a
+            join cmn_mstr.web_api wa on a.apln_id = wa.apln_id
+            join cmn_mstr.web_api_ctlr wac on wac.web_api_id = wa.web_api_id
+            join cmn_mstr.web_api_ver wav on wav.web_api_id = wa.web_api_id
+        where
+            a.nm = {applicationName}
+        and lower(a.from_dir_nm) like '%publish'
+        and wa.use_https != 1
+        and wav.ver like '{applicationVersion}%'
+        and not exists (
+            select
+                0
+            from
+                cmn_mstr.apln_ver
+            where
+                ver = {applicationVersion}
+            and lower(from_dir_nm) not like '%publish')
+        ";
+
+        return await
+            _dbContext.Database
+            .SqlQueryRaw<string>(sql)
+            .ToListAsync(cancellationToken);
+    }
+}

@@ -15,41 +15,45 @@ public class ApplicationRepo : IApplicationRepo
         _dbContext = dbContext;
     }
 
-    public async Task<Application?> GetApplicationAsync(ApplicationId? applicationId, string applicationName)
+    public async Task<Application?> GetApplicationAsync(int applicationId, CancellationToken cancellationToken)
     {
-        if (applicationId is not null)
-            return await GetApplicationAsync(applicationId);
-        return await GetApplicationAsync(applicationName);
+        return await 
+            _dbContext.Applications.FindAsync(ApplicationId.Create(applicationId), cancellationToken);
     }
 
-    public async Task<string?> GetMinimumVersionAsync(ApplicationId applicationId)
-    {
-        return await
-            (from a in _dbContext.Applications
-             where a.Id == applicationId
-             select a.MinimumAssemblyVersion)
-            .FirstOrDefaultAsync();
-    }
-
-    #region Private Methods
-
-    private async Task<Application?> GetApplicationAsync(ApplicationId applicationId)
-    {
-        return await
-            (from a in _dbContext.Applications
-             where a.Id == applicationId
-             select a)
-            .FirstOrDefaultAsync();
-    }
-
-    private async Task<Application?> GetApplicationAsync(string applicationName)
+    public async Task<Application?> GetApplicationAsync(string applicationName, CancellationToken cancellationToken)
     {
         return await
             (from a in _dbContext.Applications
              where a.Name == applicationName
              select a)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
-    #endregion
+    public async Task<string?> GetMinimumVersionAsync(int applicationId, CancellationToken cancellationToken)
+    {
+        return await
+            (from a in _dbContext.Applications
+             where a.Id == ApplicationId.Create(applicationId)
+             select a.MinimumAssemblyVersion)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<string?> GetMinimumVersionAsync(int applicationId, int facilityId, CancellationToken cancellationToken)
+    {
+        var sql = $@"
+        select
+            af.min_asmbly_ver
+        from
+            cmn_mstr.apln_fac a
+        where
+            af.apln_id = {applicationId}
+        and af.fac_id = {facilityId}
+        ";
+
+        return await
+            _dbContext.Database
+            .SqlQueryRaw<string>(sql)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

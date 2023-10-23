@@ -25,15 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stratos Core Query", "..\..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stratos Core Web Api", "..\..\stratos-core\Stratos Core Web Api\Stratos Core Web Api.csproj", "{CD4BDE56-9D57-4ED6-B501-11FDBFA20B7C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{2FBF7540-7881-495C-AEA2-11F40B0E76E5}"
-	ProjectSection(SolutionItems) = preProject
-		Api.md = Api.md
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApi.Contracts", "MinimalApi.Contracts\MinimalApi.Contracts.csproj", "{24C7863D-7B56-4DA8-83D2-3049CFA45986}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requests", "Requests", "{A714033A-2653-4CCF-9A3C-0736C6BC105F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,10 +67,6 @@ Global
 		{CD4BDE56-9D57-4ED6-B501-11FDBFA20B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD4BDE56-9D57-4ED6-B501-11FDBFA20B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD4BDE56-9D57-4ED6-B501-11FDBFA20B7C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{24C7863D-7B56-4DA8-83D2-3049CFA45986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24C7863D-7B56-4DA8-83D2-3049CFA45986}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24C7863D-7B56-4DA8-83D2-3049CFA45986}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24C7863D-7B56-4DA8-83D2-3049CFA45986}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

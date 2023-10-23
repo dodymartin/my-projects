@@ -2,14 +2,13 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Carter;
-using FluentValidation;
+using Mapster;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using MinimalApi;
+using MinimalApi.Api;
 using MinimalApi.App;
-using MinimalApi.Dom;
 using MinimalApi.Dom.Enumerations;
 using MinimalApi.Infra;
 using NLog.Extensions.Logging;
@@ -94,8 +93,6 @@ try
 
     #region Add Services
 
-    builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
-
     // TODO: From AddBootstrapServices, create new methods
     //  AddCoreLoaderServices and AddCoreHttpServices, do not
     //  include AuthenticationWebApi and ConfigurationWebApi
@@ -118,8 +115,16 @@ try
     builder.Services.TryAddSingleton(ServiceSideUsersLoader.Load());
 
     // Register each typed AppSettings class to Section in appsettings.json
-    builder.Services.Configure<MinimalApi.App.AppSettings>(config.GetSection(nameof(MinimalApi.App.AppSettings)));
-    builder.Services.Configure<Stratos.Core.Data.AppSettings>(config.GetSection(nameof(Stratos.Core.Data.AppSettings)));
+    builder.Services.Configure<MinimalApi.App.AppSettings>(config.GetSection("MinimalApi.App.AppSettings"));
+    //builder.Services.AddOptions<MinimalApi.App.AppSettings>()
+    //    .BindConfiguration(MinimalApi.App.AppSettings.ConfigurationSection)
+    //    .ValidateDataAnnotations()
+    //    .ValidateOnStart();
+    builder.Services.Configure<Stratos.Core.Data.AppSettings>(config.GetSection("Stratos.Core.Data.AppSettings"));
+    //builder.Services.AddOptions<Stratos.Core.Data.AppSettings>()
+    //    .BindConfiguration(Stratos.Core.Data.AppSettings.ConfigurationSection)
+    //    .ValidateDataAnnotations()
+    //    .ValidateOnStart();
 
     // Register DbContexts
     //builder.Services.TryAddTransient<IAuthenticationDataService, AuthenticationDataService>();
@@ -128,17 +133,21 @@ try
     builder.Services.TryAddSingleton<Stratos.Core.WebApi.IAuthenticationService, Stratos.Core.WebApi.AuthenticationService>();
 
     // Registration for Assemblies
-    builder.Services.AddApplicationConfiguration();
-    builder.Services.AddInfrastructureConfiguration();
-    builder.Services.AddDomainConfiguration();
+    builder.Services
+        .AddApplicationConfiguration()
+        .AddInfrastructureConfiguration();
 
     #endregion
+
+    builder.Services.AddCarter();
+    builder.Services.AddMapster();
 
     var app = builder.Build();
 
     #region Add Global Exception handler
 
-    // Change to use minimal api pattern at 22:15 in https://www.youtube.com/watch?v=gMwAhKddHYQ&list=PLzYkqgWkHPKBcDIP5gzLfASkQyTdy0t4k&index=4
+    // Change to use minimal api pattern at 22:15 in
+    // https://www.youtube.com/watch?v=gMwAhKddHYQ&list=PLzYkqgWkHPKBcDIP5gzLfASkQyTdy0t4k&index=4
     // for global unhandled exceptions
     app.Use(async (ctx, next) =>
     {
@@ -178,10 +187,9 @@ try
 
     // Create the base url to host
     var group = app.MapGroup("api/configuration/v6")
-        .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
         .AddEndpointFilter<CallUsageFilter>();
 
-    // Add detailed urls to base
+    // Add detailed urls to base group
     group.MapCarter();
 
     #endregion

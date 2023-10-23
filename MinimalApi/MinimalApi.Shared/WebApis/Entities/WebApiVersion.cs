@@ -7,5 +7,4 @@ public class WebApiVersion : Entity<WebApiVersionId> //EntityBase<WebApiVersion,
 {
     public int Port { get; set; }
     public string Version { get; set; }
-    public WebApiId WebApiId { get; set; }
 }

@@ -7,7 +7,6 @@ namespace MinimalApi.Dom.Applications.Entities;
 
 public class ApplicationFacility : Entity<ApplicationFacilityId> //EntityBase<ApplicationFacility, ApplicationFacilityId>
 {
-    public ApplicationId ApplicationId { get; set; }
     public FacilityId FacilityId { get; set; }
     public string MinimumAssemblyVersion { get; set; }
 }

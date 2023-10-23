@@ -37,7 +37,8 @@ internal class ApplicationConfiguration : IEntityTypeConfiguration<Application>
     private static void ConfigureApplicationFacilitiesTable(OwnedNavigationBuilder<Application, ApplicationFacility> builder)
     {
         builder.ToTable("APLN_FAC", "CMN_MSTR")
-            .WithOwner("APLN_ID");
+            .WithOwner()
+            .HasForeignKey("APLN_ID");
 
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Id).HasColumnName("APLN_FAC_ID")
@@ -51,7 +52,8 @@ internal class ApplicationConfiguration : IEntityTypeConfiguration<Application>
     private static void ConfigureApplicationVersionsTable(OwnedNavigationBuilder<Application, ApplicationVersion> builder)
     {
         builder.ToTable("APLN_VER", "CMN_MSTR")
-            .WithOwner("APLN_ID");
+            .WithOwner()
+            .HasForeignKey("APLN_ID");
 
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Id).HasColumnName("APLN_VER_ID")

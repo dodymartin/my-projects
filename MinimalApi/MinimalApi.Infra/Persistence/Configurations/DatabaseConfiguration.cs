@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MinimalApi.Dom.Databases;
-using MinimalApi.Dom.Databases.Entities;
 using MinimalApi.Dom.Databases.ValueObjects;
+using MinimalApi.Dom.Facilities;
+using MinimalApi.Dom.Facilities.ValueObjects;
 
 namespace MinimalApi.Infra
 {
@@ -22,7 +23,20 @@ namespace MinimalApi.Infra
             builder.Property(p => p.ParentId).HasColumnName("PRNT_DB_ID")
                 .HasConversion(id => id.Value, value => DatabaseId.Create(value));
 
-            builder.HasMany(e => e.Facilities).WithMany(e => e.Databases).UsingEntity<DatabaseFacility>();
+            builder.Metadata
+                .FindNavigation(nameof(Database.FacilityIds))!
+                .SetPropertyAccessMode(PropertyAccessMode.Field);
+            builder.OwnsMany(t => t.FacilityIds, ConfigureFacilitiesTable);
+        }
+
+        private static void ConfigureFacilitiesTable(OwnedNavigationBuilder<Database, FacilityId> builder)
+        {
+            builder.ToTable("DB_FAC", "CMN_MSTR")
+                .WithOwner()
+                .HasForeignKey("DB_ID");
+
+            builder.Property(p => p.Value).HasColumnName("FAC_ID")
+                .ValueGeneratedNever();
         }
     }
 }
