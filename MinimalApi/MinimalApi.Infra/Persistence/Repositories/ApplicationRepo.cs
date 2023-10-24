@@ -43,7 +43,7 @@ public class ApplicationRepo : IApplicationRepo
     {
         var sql = $@"
         select
-            af.min_asmbly_ver
+            af.min_asmbly_ver ""Value""
         from
             cmn_mstr.apln_fac a
         where

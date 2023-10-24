@@ -247,31 +247,40 @@ public class WebApiRepo : IWebApiRepo
         return endpoints;
     }
 
-    public async Task<WebApiDto?> GetOneVersionAsync(int id, string applicationVersion, CancellationToken cancellationToken)
+    public async Task<WebApiVersionDto?> GetOneVersionAsync(int applicationId, string applicationVersion, CancellationToken cancellationToken)
     {
+        var versionLength = applicationVersion.Length;
+
+        var sql = $@"
+        select distinct
+            wa.apln_id {nameof(WebApiVersionDto.ApplicationId)},
+            wav.port {nameof(WebApiVersionDto.Port)},
+            wa.use_https {nameof(WebApiVersionDto.UseHttps)},
+            wav.ver {nameof(WebApiVersionDto.Version)},
+            wa.web_api_id {nameof(WebApiVersionDto.WebApiId)}
+        from
+            cmn_mstr.web_api wa
+            join cmn_mstr.web_api_ver wav on wa.web_api_id = wav.web_api_id
+        where
+            wa.apln_id = {applicationId}
+        and substr(wav.ver,0,{versionLength}) = '{applicationVersion}'
+        ";
+
         return await
-        (from wa in _dbContext.WebApis
-         where wa.ApplicationId.Value == id
-         && wa.Versions.Any(v => applicationVersion.StartsWith(v.Version.Substring(0, applicationVersion.Length)))
-         select new WebApiDto
-         {
-             ApplicationId = wa.ApplicationId.Value,
-             Id = wa.Id.Value,
-             UseHttps = wa.UseHttps,
-             Versions = wa.Versions.Where(v => applicationVersion.StartsWith(v.Version.Substring(0, applicationVersion.Length))).ToList()
-         })
-        .FirstOrDefaultAsync(cancellationToken);
+            _dbContext.Database
+            .SqlQueryRaw<WebApiVersionDto>(sql)
+            .SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task<IList<string>> GetPingUrisAsync(string applicationName, string applicationVersion, CancellationToken cancellationToken)
     {
-        var sql = $@"
+        FormattableString sql = $@"
         select
             case when wa.use_https = 1 then
                 'https://localhost:'||wav.port||'/api/'||wac.uri_nm||'/ping'
             else
                 'https://localhost:'||wav.port||'/api/'||wac.uri_nm||'/ping'
-            end
+            end ""Value""
         from
             cmn_mstr.apln a
             join cmn_mstr.web_api wa on a.apln_id = wa.apln_id
@@ -281,7 +290,7 @@ public class WebApiRepo : IWebApiRepo
             a.nm = {applicationName}
         and lower(a.from_dir_nm) like '%publish'
         and wa.use_https != 1
-        and wav.ver like '{applicationVersion}%'
+        and wav.ver like {applicationVersion}%
         and not exists (
             select
                 0
@@ -294,7 +303,7 @@ public class WebApiRepo : IWebApiRepo
 
         return await
             _dbContext.Database
-            .SqlQueryRaw<string>(sql)
+            .SqlQuery<string>(sql)
             .ToListAsync(cancellationToken);
     }
 }

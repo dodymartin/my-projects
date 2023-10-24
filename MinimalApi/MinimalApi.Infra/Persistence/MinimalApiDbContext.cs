@@ -7,6 +7,7 @@ using MinimalApi.Dom.ApiCallUsages;
 using MinimalApi.Dom.Common.Models;
 using MinimalApi.Dom.Databases;
 using MinimalApi.Dom.WebApis;
+using MinimalApi.Dom.WebApis.Dtos;
 using MinimalApi.Infra.Persistence.Interceptors;
 using Application = MinimalApi.Dom.Applications.Application;
 
@@ -24,6 +25,7 @@ public class MinimalApiDbContext : DbContext, IMinimalApiDbContext
     public DbSet<Application> Applications { get; private set; } = null!;
     public DbSet<Database> Databases { get; private set; } = null!;
     public DbSet<WebApi> WebApis { get; private set; } = null!;
+    public DbSet<WebApiVersionDto> WebApiVersionDtos { get; private set; } = null!;
 
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade IMinimalApiDbContext.Database => Database;
 

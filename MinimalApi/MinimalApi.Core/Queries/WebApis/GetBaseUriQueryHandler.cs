@@ -1,6 +1,8 @@
-﻿using ErrorOr;
+﻿using System;
+using ErrorOr;
 using MediatR;
 using MinimalApi.App.Interfaces;
+using MinimalApi.Dom.Applications.Entities;
 using ApplicationId = MinimalApi.Dom.Applications.ValueObjects.ApplicationId;
 
 namespace MinimalApi.App.Queries.WebApis;
@@ -16,11 +18,11 @@ public class GetBaseUriQueryHandler : IRequestHandler<GetBaseUriQuery, ErrorOr<s
 
     public async Task<ErrorOr<string?>> Handle(GetBaseUriQuery queryRequest, CancellationToken cancellationToken)
     {
-        var webApiDto = await _webApiRepo.GetOneVersionAsync(queryRequest.ApplicationId!.Value, queryRequest.ApplicationVersion!, cancellationToken);
-        if (webApiDto is not null)
+        var webApiVersionDto = await _webApiRepo.GetOneVersionAsync(queryRequest.ApplicationId!.Value, queryRequest.ApplicationVersion!, cancellationToken);
+        if (webApiVersionDto is not null)
         {
-            return webApiDto.GetBaseUriByApplicationVersion(webApiDto.UseHttps, queryRequest.ApplicationVersion!);
+            return webApiVersionDto.GetBaseUri();
         }
-        return Error.NotFound();
+        return Error.NotFound($"Web Api version {queryRequest.ApplicationVersion} is not found.");
     }
 }

@@ -8,6 +8,6 @@ public interface IWebApiRepo
     Task<IList<ControllerUriInfoByApplicationDto>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, int applicationId, string applicationVersion, CancellationToken cancellationToken);
     Task<IList<ControllerUriInfoByApplicationDto>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, int applicationId, string applicationVersion, string machineName, CancellationToken cancellationToken);
     Task<IList<ControllerUriFacilityInfoByApplicationDto>> GetControllerUrisAsync(EnvironmentTypes environmentType, string uriName, int applicationId, string applicationVersion, int facilityId, CancellationToken cancellationToken);
-    Task<WebApiDto?> GetOneVersionAsync(int id, string applicationVersion, CancellationToken cancellationToken);
+    Task<WebApiVersionDto?> GetOneVersionAsync(int applicationId, string applicationVersion, CancellationToken cancellationToken);
     Task<IList<string>> GetPingUrisAsync(string applicationName, string applicationVersion, CancellationToken cancellationToken);
 }
