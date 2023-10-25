@@ -132,6 +132,8 @@ try
     builder.Services.AddInfraServices();
     builder.Services.AddSharedServices();
 
+    builder.Services.AddCarter();
+
     #endregion
 
     var app = builder.Build();

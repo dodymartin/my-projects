@@ -39,9 +39,9 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\stratos-core\Stratos Core Data\Stratos Core Data.csproj" />
 	  <ProjectReference Include="..\..\..\stratos-core\Stratos Core\Stratos Core.csproj" />
-	  <ProjectReference Include="..\MinimalApi.Core\MinimalApi.Core.csproj" />
+	  <ProjectReference Include="..\MinimalApi.Core\MinimalApi.App.csproj" />
 	  <ProjectReference Include="..\MinimalApi.Infra\MinimalApi.Infra.csproj" />
-	  <ProjectReference Include="..\MinimalApi.Shared\MinimalApi.Shared.csproj" />
+	  <ProjectReference Include="..\MinimalApi.Shared\MinimalApi.Dom.csproj" />
 	</ItemGroup>
 
 </Project>

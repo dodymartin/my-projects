@@ -5,9 +5,9 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApi", "MinimalApi\MinimalApi.csproj", "{10D70D20-442D-4DE2-9EF8-BE85D6A18633}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApi.Core", "MinimalApi.Core\MinimalApi.Core.csproj", "{D3462D97-38EB-4D6B-80DD-6BE40331259C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApi.App", "MinimalApi.Core\MinimalApi.App.csproj", "{D3462D97-38EB-4D6B-80DD-6BE40331259C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApi.Shared", "MinimalApi.Shared\MinimalApi.Shared.csproj", "{86E212BC-6512-404F-9A46-E08FFBDBCD5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApi.Dom", "MinimalApi.Shared\MinimalApi.Dom.csproj", "{86E212BC-6512-404F-9A46-E08FFBDBCD5D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApi.Infra", "MinimalApi.Infra\MinimalApi.Infra.csproj", "{313E1F45-DA3C-42E2-8B16-B430FF4534D7}"
 EndProject
