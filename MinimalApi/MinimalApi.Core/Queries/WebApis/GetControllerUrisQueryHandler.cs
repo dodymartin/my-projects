@@ -25,17 +25,17 @@ public class GetControllerUrisQueryHandler : IRequestHandler<GetControllerUrisQu
     public async Task<ErrorOr<IList<GetControllerUrisResponse>>> Handle(GetControllerUrisQuery queryRequest, CancellationToken cancellationToken)
     {
         Application? application;
-        if (!queryRequest.ApplicationId.HasValue)
+        if (queryRequest.ApplicationId.HasValue)
         {
             application = await _applicationRepo.GetApplicationAsync(queryRequest.ApplicationId!.Value, cancellationToken);
             if (application is null)
-                return Error.NotFound(description: $"Application ({queryRequest.ApplicationId.Value}) is not found.");
+                return Error.NotFound(description: $"Application Id ({queryRequest.ApplicationId.Value}) is not found.");
         }
         else
         {
             application = await _applicationRepo.GetApplicationAsync(queryRequest.ApplicationName!, cancellationToken);
             if (application is null)
-                return Error.NotFound(description: $"Application ({queryRequest.ApplicationName}) is not found.");
+                return Error.NotFound(description: $"Application Name ({queryRequest.ApplicationName}) is not found.");
         }
 
         var environmentType = (EnvironmentTypes)Enum.Parse(typeof(EnvironmentTypes), _appSettings.EnvironmentType);

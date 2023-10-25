@@ -36,15 +36,15 @@ public class DatabaseRepo : IDatabaseRepo
 
     public async Task<string?> GetParentDatabaseNameAsync(string childDatabaseName, CancellationToken cancellationToken)
     {
-        FormattableString sql = $@"
+        FormattableString sql = $"""
         select
-            pd.nm ""Value""
+            pd.nm "Value"
         from
             cmn_mstr.db d
             join cmn_mstr.db pd on d.prnt_db_id = pd.db_id
         where
             d.nm = {childDatabaseName}
-        ";
+        """;
 
         return await
             _dbContext.Database

@@ -17,7 +17,7 @@ public class CheckMinimumVersionQueryHandler : IRequestHandler<CheckMinimumVersi
     public async Task<ErrorOr<bool>> Handle(CheckMinimumVersionQuery queryRequest, CancellationToken cancellationToken)
     {
         Application? application;
-        if (!queryRequest.ApplicationId.HasValue)
+        if (queryRequest.ApplicationId.HasValue)
         {
             application = await _applicationRepo.GetApplicationAsync(queryRequest.ApplicationId!.Value, cancellationToken);
             if (application is null)

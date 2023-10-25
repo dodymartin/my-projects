@@ -1,13 +1,13 @@
-using System.Configuration;
+using System.ComponentModel.DataAnnotations;
 
 namespace MinimalApi.App;
 
 public class AppSettings
 {
-    public const string ConfigurationSection = "Minimal.App.AppSettings";
+    public const string ConfigurationSection = "MinimalApi.App.AppSettings";
 
-    public string BaseUri { get; set; }
-    public string DatabaseName { get; set; }
-    public string EnvironmentType { get; set; }
-    public bool LogCallers { get; set; }
+    public required string BaseUri { get; set; }
+    public required string DatabaseName { get; set; }
+    public required string EnvironmentType { get; set; }
+    public required bool LogCallers { get; set; } = true;
 }

@@ -56,7 +56,7 @@ internal class ApplicationConfiguration : IEntityTypeConfiguration<Application>
             .HasForeignKey("APLN_ID");
 
         builder.HasKey(p => p.Id);
-        builder.Property(p => p.Id).HasColumnName("APLN_VER_ID")
+        builder.Property(p => p.Id).HasColumnName("APLN_VER_GUID")
             .ValueGeneratedNever()
             .HasConversion(id => id.Value, value => ApplicationVersionId.Create(value));
         builder.Property(p => p.FromDirectoryName).HasColumnName("FROM_DIR_NM");

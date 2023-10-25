@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MinimalApi.Dom.Databases;
 using MinimalApi.Dom.Databases.ValueObjects;
-using MinimalApi.Dom.Facilities;
 using MinimalApi.Dom.Facilities.ValueObjects;
 
 namespace MinimalApi.Infra

@@ -1,9 +1,6 @@
-﻿using System;
-using ErrorOr;
+﻿using ErrorOr;
 using MediatR;
 using MinimalApi.App.Interfaces;
-using MinimalApi.Dom.Applications.Entities;
-using ApplicationId = MinimalApi.Dom.Applications.ValueObjects.ApplicationId;
 
 namespace MinimalApi.App.Queries.WebApis;
 

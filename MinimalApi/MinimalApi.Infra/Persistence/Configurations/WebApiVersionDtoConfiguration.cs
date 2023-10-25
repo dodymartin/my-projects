@@ -4,7 +4,7 @@ using MinimalApi.Dom.WebApis.Dtos;
 
 namespace MinimalApi.Infra
 {
-    internal class WebApiVersionDtoConfiguration : IEntityTypeConfiguration<WebApiVersionDto>
+    public class WebApiVersionDtoConfiguration : IEntityTypeConfiguration<WebApiVersionDto>
     {
         public void Configure(EntityTypeBuilder<WebApiVersionDto> builder)
         {

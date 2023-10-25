@@ -2,18 +2,17 @@
 
 namespace MinimalApi.Dom.Applications.ValueObjects;
 
-public sealed class ApplicationFacilityId : AggregateRootId<Guid>
+public sealed class ApplicationFacilityId : AggregateRootId<int>
 {
-    public override Guid Value { get; protected set; }
+    public override int Value { get; protected set; }
 
     private ApplicationFacilityId() { }
-    private ApplicationFacilityId(Guid value)
+    private ApplicationFacilityId(int value)
     {
         Value = value;
     }
 
-    public static ApplicationFacilityId CreateUnique() => new(Guid.NewGuid());
-    public static ApplicationFacilityId Create(Guid value) => new(value);
+    public static ApplicationFacilityId Create(int value) => new(value);
     public override IEnumerable<object> GetEqualityComponents()
     {
         yield return Value;

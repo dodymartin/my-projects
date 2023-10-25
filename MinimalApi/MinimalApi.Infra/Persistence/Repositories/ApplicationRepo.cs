@@ -17,8 +17,11 @@ public class ApplicationRepo : IApplicationRepo
 
     public async Task<Application?> GetApplicationAsync(int applicationId, CancellationToken cancellationToken)
     {
-        return await 
-            _dbContext.Applications.FindAsync(ApplicationId.Create(applicationId), cancellationToken);
+        return await
+            (from a in _dbContext.Applications
+             where a.Id == ApplicationId.Create(applicationId)
+             select a)
+            .SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task<Application?> GetApplicationAsync(string applicationName, CancellationToken cancellationToken)
@@ -27,33 +30,24 @@ public class ApplicationRepo : IApplicationRepo
             (from a in _dbContext.Applications
              where a.Name == applicationName
              select a)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public async Task<string?> GetMinimumVersionAsync(int applicationId, CancellationToken cancellationToken)
-    {
-        return await
-            (from a in _dbContext.Applications
-             where a.Id == ApplicationId.Create(applicationId)
-             select a.MinimumAssemblyVersion)
-            .FirstOrDefaultAsync(cancellationToken);
+            .SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task<string?> GetMinimumVersionAsync(int applicationId, int facilityId, CancellationToken cancellationToken)
     {
-        var sql = $@"
+        FormattableString sql = $"""
         select
-            af.min_asmbly_ver ""Value""
+            af.min_asmbly_ver "Value"
         from
-            cmn_mstr.apln_fac a
+            cmn_mstr.apln_fac af
         where
             af.apln_id = {applicationId}
         and af.fac_id = {facilityId}
-        ";
+        """;
 
         return await
             _dbContext.Database
-            .SqlQueryRaw<string>(sql)
+            .SqlQuery<string>(sql)
             .SingleOrDefaultAsync(cancellationToken);
     }
 }

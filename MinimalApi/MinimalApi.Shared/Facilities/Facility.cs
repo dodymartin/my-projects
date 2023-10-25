@@ -1,5 +1,4 @@
 ﻿using MinimalApi.Dom.Common.Models;
-using MinimalApi.Dom.Databases;
 using MinimalApi.Dom.Facilities.ValueObjects;
 
 namespace MinimalApi.Dom.Facilities;

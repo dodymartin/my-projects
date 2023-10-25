@@ -23,6 +23,8 @@ public class MinimalApiDbContext : DbContext, IMinimalApiDbContext
 
     public DbSet<ApiCallUsage> ApiCallUsages { get; private set; } = null!;
     public DbSet<Application> Applications { get; private set; } = null!;
+    public DbSet<ControllerUriFacilityInfoByApplicationDto> ControllerUriFacilityInfoByApplicationDtos { get; private set; } = null!;
+    public DbSet<ControllerUriInfoByApplicationDto> ControllerUriInfoByApplicationDtos { get; private set; } = null!;
     public DbSet<Database> Databases { get; private set; } = null!;
     public DbSet<WebApi> WebApis { get; private set; } = null!;
     public DbSet<WebApiVersionDto> WebApiVersionDtos { get; private set; } = null!;

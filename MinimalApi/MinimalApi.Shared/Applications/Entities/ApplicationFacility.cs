@@ -1,7 +1,6 @@
 ﻿using MinimalApi.Dom.Applications.ValueObjects;
 using MinimalApi.Dom.Common.Models;
 using MinimalApi.Dom.Facilities.ValueObjects;
-using ApplicationId = MinimalApi.Dom.Applications.ValueObjects.ApplicationId;
 
 namespace MinimalApi.Dom.Applications.Entities;
 

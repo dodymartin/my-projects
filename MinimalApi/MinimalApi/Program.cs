@@ -115,12 +115,12 @@ try
     builder.Services.TryAddSingleton(ServiceSideUsersLoader.Load());
 
     // Register each typed AppSettings class to Section in appsettings.json
-    builder.Services.Configure<MinimalApi.App.AppSettings>(config.GetSection("MinimalApi.App.AppSettings"));
+    builder.Services.Configure<MinimalApi.App.AppSettings>(config.GetSection(MinimalApi.App.AppSettings.ConfigurationSection));
     //builder.Services.AddOptions<MinimalApi.App.AppSettings>()
     //    .BindConfiguration(MinimalApi.App.AppSettings.ConfigurationSection)
     //    .ValidateDataAnnotations()
     //    .ValidateOnStart();
-    builder.Services.Configure<Stratos.Core.Data.AppSettings>(config.GetSection("Stratos.Core.Data.AppSettings"));
+    builder.Services.Configure<Stratos.Core.Data.AppSettings>(config.GetSection(Stratos.Core.Data.AppSettings.ConfigurationSection));
     //builder.Services.AddOptions<Stratos.Core.Data.AppSettings>()
     //    .BindConfiguration(Stratos.Core.Data.AppSettings.ConfigurationSection)
     //    .ValidateDataAnnotations()
