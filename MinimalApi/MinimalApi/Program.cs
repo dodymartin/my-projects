@@ -1,16 +1,20 @@
 using System.Diagnostics;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Carter;
+using FluentValidation;
 using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using MinimalApi.Api;
-using MinimalApi.App;
-using MinimalApi.Dom.Enumerations;
-using MinimalApi.Infra;
+using MinimalApi.Api.Common;
+using MinimalApi.Api.Features.ApiCallUsages;
+using MinimalApi.Api.Features.Applications;
+using MinimalApi.Api.Features.Databases;
+using MinimalApi.Api.Features.WebApis;
 using NLog.Extensions.Logging;
 using Stratos.Core;
 using Stratos.Core.WebApi;
@@ -115,7 +119,7 @@ try
     builder.Services.TryAddSingleton(ServiceSideUsersLoader.Load());
 
     // Register each typed AppSettings class to Section in appsettings.json
-    builder.Services.Configure<MinimalApi.App.AppSettings>(config.GetSection(MinimalApi.App.AppSettings.ConfigurationSection));
+    builder.Services.Configure<MinimalApi.Api.AppSettings>(config.GetSection(MinimalApi.Api.AppSettings.ConfigurationSection));
     //builder.Services.AddOptions<MinimalApi.App.AppSettings>()
     //    .BindConfiguration(MinimalApi.App.AppSettings.ConfigurationSection)
     //    .ValidateDataAnnotations()
@@ -132,15 +136,49 @@ try
     // Register Worker services
     builder.Services.TryAddSingleton<Stratos.Core.WebApi.IAuthenticationService, Stratos.Core.WebApi.AuthenticationService>();
 
-    // Registration for Assemblies
-    builder.Services
-        .AddApplicationConfiguration()
-        .AddInfrastructureConfiguration();
-
     #endregion
 
     builder.Services.AddCarter();
     builder.Services.AddMapster();
+
+    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
+        .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+    builder.Services.AddScoped(
+        typeof(IPipelineBehavior<,>),
+        typeof(ValidationBehavior<,>));
+
+    builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+    builder.Services.TryAddScoped<PublishDomainEventsInterceptor>();
+    builder.Services.TryAddScoped<IDbContextSettings, DbContextSettings>();
+    builder.Services.AddDbContext<IApiCallUsageDbContext, ApiCallUsageDbContext>();
+    builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
+    builder.Services.AddDbContext<IDatabaseDbContext, DatabaseDbContext>();
+    builder.Services.AddDbContext<IWebApiDbContext, WebApiDbContext>();
+
+    builder.Services.TryAddScoped<IBaseCrudRepo<ApiCallUsage, Guid>, BaseCrudRepo<ApiCallUsage, Guid>>();
+
+    // Using Scrutor ... Register all *Repo classes to DI
+    builder.Services.Scan(scan => scan
+        .FromCallingAssembly()
+        .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repo")))
+        .AsMatchingInterface()
+        .WithScopedLifetime());
+
+    //// Using Scrutor ... Register all *Service classes to DI        
+    //builder.Services.Scan(scan => scan
+    //    .FromCallingAssembly()
+    //    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service")))
+    //    .AsSelf()
+    //    .WithScopedLifetime());
+
+    //// Using Scrutor ... Register all *Validator classes to DI
+    //builder.Services.Scan(scan => scan
+    //    .FromCallingAssembly()
+    //    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Validator")))
+    //    .AsSelf()
+    //    .WithSingletonLifetime());
 
     var app = builder.Build();
 
