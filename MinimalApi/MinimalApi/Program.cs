@@ -180,6 +180,9 @@ try
     //    .AsSelf()
     //    .WithSingletonLifetime());
 
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
     var app = builder.Build();
 
     #region Add Global Exception handler
@@ -214,6 +217,13 @@ try
     });
 
     #endregion
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
     app.UseHttpsRedirection();
     app.UseRouting();
