@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+    ports:
+      - "80:80"
+      - "8080:8080" #(enabled by --api.insecure=true)
+    environment:
+      - HTTP_PROXY=http://web.prod.proxy.cargill.com/
+      - HTTPS_PROXY=http://web.prod.proxy.cargill.com/
+      - NO_PROXY=*.cargill.com,localhost,127.0.0.0/8,172.0.0.0/8
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      
+  configuration-v6:
+    image: web-api-configuration:v6
+    environment:
+      - HOSTNAME=$COMPUTERNAME
+    labels:
+      - "traefik.http.routers.configuration-v6.rule=PathPrefix(`/api/configuration/v6`)"
+    volumes:
+      - /c/repos/douglasadams/my-projects/minimalapi/minimalapi/bin/debug/net7.0/v6/logs:/app/logs
+      - /c/repos/douglasadams/my-projects:/app/configbysite
+      
+  configuration-v7:
+    image: web-api-configuration:v7
+    environment:
+      - HOSTNAME=$COMPUTERNAME
+    labels:
+      - "traefik.http.routers.configuration-v7.rule=PathPrefix(`/api/configuration/v7`)"
+    volumes:
+      - /c/repos/douglasadams/my-projects/minimalapi/minimalapi/bin/debug/net7.0/v7/logs:/app/logs
+      - /c/repos/douglasadams/my-projects:/app/configbysite

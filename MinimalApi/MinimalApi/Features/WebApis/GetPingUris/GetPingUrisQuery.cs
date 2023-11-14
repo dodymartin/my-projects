@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using MinimalApi.Api.Core;
 
 namespace MinimalApi.Api.Features.WebApis;
 
@@ -32,7 +33,7 @@ public class GetPingUrisQueryHandler : IRequestHandler<GetPingsQuery, ErrorOr<ID
         {
             var parts = serviceName.Split(" v");
             var applicationName = parts[0];
-            var applicationVersion = Stratos.Core.CoreMethods.GetMajorMinorVersion(parts[1]);
+            var applicationVersion = CoreMethods.GetMajorMinorVersion(parts[1]);
 
             var pingUrls = await _webApiRepo.GetPingUrisAsync(applicationName, applicationVersion, cancellationToken);
             foreach (var pingUrl in pingUrls)

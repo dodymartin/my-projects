@@ -5,8 +5,8 @@ namespace MinimalApi.Api.Tests.UnitTests.WebApis.Features.GetBaseUri;
 
 public class GetBaseUriQueryHandlerTests
 {
-    private IWebApiRepo _mockRepo;
-    private GetBaseUriQueryHandler _handler;
+    private readonly IWebApiRepo _mockRepo;
+    private readonly GetBaseUriQueryHandler _handler;
 
     public GetBaseUriQueryHandlerTests()
     {

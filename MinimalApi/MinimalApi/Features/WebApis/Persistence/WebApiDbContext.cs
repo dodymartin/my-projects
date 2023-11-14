@@ -8,7 +8,7 @@ namespace MinimalApi.Api.Features.WebApis;
 public class WebApiDbContext : DbContext, IWebApiDbContext
 {
     private readonly ILogger<WebApiDbContext> _logger;
-    private readonly Stratos.Core.Data.AppSettings _appSettings;
+    private readonly AppSettings _appSettings;
     private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor;
 
     public IDbContextSettings Settings { get; }
@@ -20,11 +20,11 @@ public class WebApiDbContext : DbContext, IWebApiDbContext
     public DbSet<WebApi> WebApis { get; private set; } = null!;
     public DbSet<WebApiVersionDto> WebApiVersionDtos { get; private set; } = null!;
 
-    public WebApiDbContext(ILogger<WebApiDbContext> logger, IOptions<Stratos.Core.Data.AppSettings> appDataSettings, DbContextOptions<WebApiDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor)
+    public WebApiDbContext(ILogger<WebApiDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<WebApiDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor)
         : base(options)
     {
         _logger = logger;
-        _appSettings = appDataSettings.Value;
+        _appSettings = appSettings.Value;
         Settings = settings;
         _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
     }
@@ -32,7 +32,10 @@ public class WebApiDbContext : DbContext, IWebApiDbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         _logger.LogDebug("Configuring for {databaseName}", Settings.DatabaseName);
-        optionsBuilder.UseOracle(Settings.Database.ConnectString);
+
+        var connectString = "Data Source=(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP) (Host = xeg6client03-vip.admin.cargill.com) (Port = 1521)) (CONNECT_DATA = (SID = qpfsnspt)));User Id=ps900183;Password=Q1w2e3r4;";
+        optionsBuilder.UseOracle(connectString);
+        //optionsBuilder.UseOracle(Settings.Database.ConnectString);
         if (_appSettings.ShowSql)
             optionsBuilder.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
         optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public class GetPingUrisEndpoint : ICarterModule
+public sealed class GetPingUrisEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder parentGroup)
     {

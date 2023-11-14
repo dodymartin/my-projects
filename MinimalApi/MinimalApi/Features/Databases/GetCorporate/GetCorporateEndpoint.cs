@@ -5,7 +5,7 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.Databases;
 
-public class GetCorporateEndpoint : ICarterModule
+public sealed class GetCorporateEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder parentGroup)
     {

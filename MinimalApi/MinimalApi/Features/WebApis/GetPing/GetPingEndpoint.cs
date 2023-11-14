@@ -2,7 +2,7 @@
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public class GetPingEndpoint : ICarterModule
+public sealed class GetPingEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder parentGroup)
     {

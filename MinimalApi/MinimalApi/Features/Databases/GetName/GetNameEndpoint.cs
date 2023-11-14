@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MinimalApi.Api.Features.Databases;
 
-public class GetNameEndpoint : ICarterModule
+public sealed class GetNameEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder parentGroup)
     {

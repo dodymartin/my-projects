@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MinimalApi.Api.Features.Applications;
 
-public class CheckMinimumVersionEndpoint : ICarterModule
+public sealed class CheckMinimumVersionEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder parentGroup)
     {

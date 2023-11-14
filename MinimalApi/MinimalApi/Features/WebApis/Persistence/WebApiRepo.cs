@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MinimalApi.Api.Common;
-using Stratos.Core.Query;
 
 namespace MinimalApi.Api.Features.WebApis;
 
@@ -64,13 +63,13 @@ public class WebApiRepo : IWebApiRepo
         where
             waa.is_dflt = 1
         and waae.fac_id is null
-            {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
-            {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)}
-            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId)} 
+        and wac.uri_nm = '{uriName}'
+        and waa.envir_tp_id = {(int)environmentType}
+        and waae.apln_id = {applicationId} 
         """;
 
         if (!string.IsNullOrEmpty(applicationVersion))
-            sql += QueryUtilities.GetWhereSql("waae.apln_ver", applicationVersion);
+            sql += $""" and waae.apln_ver = '{applicationVersion}' """;
 
         var endpoints = await
             _dbContext.ControllerUriInfoByApplicationDtos
@@ -115,8 +114,8 @@ public class WebApiRepo : IWebApiRepo
                 join cmn_mstr.web_api_addr waa on waax.web_api_addr_id = waa.web_api_addr_id
             where
                 waa.is_dflt = 1
-                {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
-                {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)} 
+            and wac.uri_nm = '{uriName}'
+            and waa.envir_tp_id = {(int)environmentType}
             """;
 
             endpoints = await
@@ -155,13 +154,13 @@ public class WebApiRepo : IWebApiRepo
             join cmn_mstr.web_api_apln_endpt waae on wav.web_api_ver_id = waae.web_api_ver_id
             join cmn_mstr.web_api wa on wav.web_api_id = wa.web_api_id
             join cmn_mstr.apln a on waae.apln_id = a.apln_id
-        where 1=1
-            {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
-            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId)} 
+        where
+            wac.uri_nm = '{uriName}'
+        and waae.apln_id = {applicationId} 
         """;
 
         if (!string.IsNullOrEmpty(applicationVersion))
-            sql += QueryUtilities.GetWhereSql("waae.apln_ver", applicationVersion);
+            sql += $""" and waae.apln_ver = '{applicationVersion}' """;
 
         return await
             _dbContext.ControllerUriInfoByApplicationDtos
@@ -202,14 +201,14 @@ public class WebApiRepo : IWebApiRepo
             join cmn_mstr.apln a on waae.apln_id = a.apln_id
         where
             waa.ord is not null
-            {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
-            {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)}
-            {QueryUtilities.GetWhereSql("waae.apln_id", applicationId)}
-            {QueryUtilities.GetWhereSql("waae.fac_id", facilityId)}
+        and wac.uri_nm = '{uriName}'
+        and waa.envir_tp_id = {(int)environmentType}
+        and waae.apln_id = {applicationId}
+        and waae.fac_id = {facilityId} 
         """;
 
         if (!string.IsNullOrEmpty(applicationVersion))
-            sql += QueryUtilities.GetWhereSql("waae.apln_ver", applicationVersion);
+            sql += $""" and waae.apln_ver = '{applicationVersion}' """;
 
         var endpoints = await
             _dbContext.ControllerUriFacilityInfoByApplicationDtos
@@ -255,8 +254,8 @@ public class WebApiRepo : IWebApiRepo
                 join cmn_mstr.apln a on a.apln_id = {applicationId}
             where
                 waa.ord is not null
-                {QueryUtilities.GetWhereSql("wac.uri_nm", uriName)}
-                {QueryUtilities.GetWhereSql("waa.envir_tp_id", (int)environmentType)}
+            and wac.uri_nm = '{uriName}'
+            and waa.envir_tp_id = {(int)environmentType} 
             """;
 
             endpoints = await

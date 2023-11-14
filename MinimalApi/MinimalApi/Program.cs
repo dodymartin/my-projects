@@ -6,20 +6,19 @@ using Carter;
 using FluentValidation;
 using Mapster;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MinimalApi.Api.Common;
+using MinimalApi.Api.Core;
 using MinimalApi.Api.Features.ApiCallUsages;
 using MinimalApi.Api.Features.Applications;
 using MinimalApi.Api.Features.Databases;
 using MinimalApi.Api.Features.WebApis;
 using NLog.Extensions.Logging;
-using Stratos.Core;
-using Stratos.Core.WebApi;
 
-if (Environment.UserInteractive)
+bool.TryParse(Environment.GetEnvironmentVariable("DOCKER_RUNNING"), out var dockerRunning);
+
+if (Environment.UserInteractive && !dockerRunning)
 {
     Console.WriteLine("Application is paused. If needed, attach");
     Console.WriteLine("remote debugger now.");
@@ -31,11 +30,17 @@ try
 {
     #region Get General/NLog Configuration
 
-    Environment.CurrentDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName)!;
+    if (!dockerRunning)
+        Environment.CurrentDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName)!;
+
+    Console.WriteLine($"Current Directory        : {Environment.CurrentDirectory}");
+    Console.WriteLine($"Base Directory (for logs): {AppDomain.CurrentDomain.BaseDirectory}");
+
+    var configPath = Environment.GetEnvironmentVariable("CONFIG_PATH") ?? Environment.CurrentDirectory;
+    var configBySitePath = Environment.GetEnvironmentVariable("CONFIG_SITE_PATH") ?? string.Empty;
 
     // Load IConfiguration from .json files
-    var config = Stratos.Core.CoreMethods.BuildConfiguration(Environment.CurrentDirectory)
-        .Build();
+    var config = CoreMethods.BuildConfiguration(configPath).Build();
 
     // Setup logger directly for startup
     NLog.LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
@@ -74,24 +79,26 @@ try
 
     #region Add Authentication/Authorization
 
-    // Add Basic Authorization
-    builder.Services.AddAuthentication()
-        .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicDefaults.AuthenticationScheme, null);
-    builder.Services.AddAuthorizationBuilder()
-        .AddPolicy(BasicDefaults.AuthenticationScheme, policy =>
-        {
-            policy.RequireAuthenticatedUser()
-                .AuthenticationSchemes.Add(BasicDefaults.AuthenticationScheme);
-        });
+    //// Comes from Stratos.Core.WebApi
+    ////
+    //// Add Basic Authorization
+    //builder.Services.AddAuthentication()
+    //    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicDefaults.AuthenticationScheme, null);
+    //builder.Services.AddAuthorizationBuilder()
+    //    .AddPolicy(BasicDefaults.AuthenticationScheme, policy =>
+    //    {
+    //        policy.RequireAuthenticatedUser()
+    //            .AuthenticationSchemes.Add(BasicDefaults.AuthenticationScheme);
+    //    });
 
-    // Add JWT Authorization
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(opts =>
-        {
-            opts.SaveToken = true;
-            opts.TokenValidationParameters = JwtConfiguration.GetTokenValidationParameters();
-        });
-    builder.Services.AddAuthorization();
+    //// Add JWT Authorization
+    //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    //    .AddJwtBearer(opts =>
+    //    {
+    //        opts.SaveToken = true;
+    //        opts.TokenValidationParameters = JwtConfiguration.GetTokenValidationParameters();
+    //    });
+    //builder.Services.AddAuthorization();
 
     #endregion
 
@@ -102,39 +109,32 @@ try
     //  include AuthenticationWebApi and ConfigurationWebApi
 
     //builder.Services.AddBootstrapServices();
-    builder.Services.TryAddSingleton(ClientSideUsersLoader.Load());
-    builder.Services.TryAddSingleton(DatabasesLoader.Load());
-    builder.Services.TryAddSingleton(SiteConfigurationLoader.Load());
 
-    // Register IApplicationContext to force feeding ApplicationId
-    builder.Services.TryAddSingleton<IApplicationContext>(sp =>
-    {
-        var logger = sp.GetRequiredService<ILogger<ApplicationContext>>();
-        return new ApplicationContext(
-            logger,
-            (int)Applications.StratosConfigurationWebApiHost);
-    });
+    //// Comes from Stratos.Core
+    //builder.Services.TryAddSingleton(ClientSideUsersLoader.Load(configPath, sitePath));
+    if (dockerRunning)
+        builder.Services.TryAddSingleton(DatabasesLoader.Load(configPath, configBySitePath));
+    else
+        builder.Services.TryAddSingleton(DatabasesLoader.Load(configPath));
+    //builder.Services.TryAddSingleton(SiteConfigurationLoader.Load(configPath, sitePath));
 
-    // Register IServiceSideUsers (serviceSideUsers.json)
-    builder.Services.TryAddSingleton(ServiceSideUsersLoader.Load());
+    //// Register IApplicationContext to force feeding ApplicationId
+    //builder.Services.TryAddSingleton<IApplicationContext>(sp =>
+    //{
+    //    var logger = sp.GetRequiredService<ILogger<ApplicationContext>>();
+    //    return new ApplicationContext(
+    //        logger,
+    //        (int)Applications.StratosConfigurationWebApiHost);
+    //});
+
+    //// Register IServiceSideUsers (serviceSideUsers.json)
+    //builder.Services.TryAddSingleton(ServiceSideUsersLoader.Load());
 
     // Register each typed AppSettings class to Section in appsettings.json
-    builder.Services.Configure<MinimalApi.Api.AppSettings>(config.GetSection(MinimalApi.Api.AppSettings.ConfigurationSection));
-    //builder.Services.AddOptions<MinimalApi.App.AppSettings>()
-    //    .BindConfiguration(MinimalApi.App.AppSettings.ConfigurationSection)
-    //    .ValidateDataAnnotations()
-    //    .ValidateOnStart();
-    builder.Services.Configure<Stratos.Core.Data.AppSettings>(config.GetSection(Stratos.Core.Data.AppSettings.ConfigurationSection));
-    //builder.Services.AddOptions<Stratos.Core.Data.AppSettings>()
-    //    .BindConfiguration(Stratos.Core.Data.AppSettings.ConfigurationSection)
-    //    .ValidateDataAnnotations()
-    //    .ValidateOnStart();
-
-    // Register DbContexts
-    //builder.Services.TryAddTransient<IAuthenticationDataService, AuthenticationDataService>();
-
-    // Register Worker services
-    builder.Services.TryAddSingleton<Stratos.Core.WebApi.IAuthenticationService, Stratos.Core.WebApi.AuthenticationService>();
+    builder.Services.AddOptions<MinimalApi.Api.AppSettings>()
+        .BindConfiguration(MinimalApi.Api.AppSettings.ConfigurationSection)
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
 
     #endregion
 
@@ -144,9 +144,7 @@ try
     builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
         .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-    builder.Services.AddScoped(
-        typeof(IPipelineBehavior<,>),
-        typeof(ValidationBehavior<,>));
+    builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
     builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
@@ -194,6 +192,8 @@ try
     {
         try
         {
+            if (dockerRunning)
+                ctx.Response.Headers.Add("Container-Id", Environment.MachineName);
             await next();
         }
         catch (Exception ex)
@@ -228,13 +228,13 @@ try
     app.UseHttpsRedirection();
     app.UseRouting();
 
-    app.UseAuthentication();
-    app.UseAuthorization();
+    //app.UseAuthentication();
+    //app.UseAuthorization();
 
     #region Add endpoints
 
     // Create the base url to host
-    var group = app.MapGroup("api/configuration/v6")
+    var group = app.MapGroup("api/configuration/v8")
         .AddEndpointFilter<CallUsageFilter>();
 
     // Add detailed urls to base group
@@ -246,11 +246,15 @@ try
 }
 catch (Exception ex)
 {
+    if (dockerRunning)
+        throw;
+    Console.WriteLine(ex.ToString());
     NLog.LogManager.GetCurrentClassLogger().Log(NLog.LogLevel.Error, ex.ToString());
     Environment.ExitCode = 10001;
+
 }
 
 NLog.LogManager.GetCurrentClassLogger().Log(NLog.LogLevel.Info, "Stopping");
 
-if (Environment.UserInteractive)
+if (Environment.UserInteractive && !dockerRunning)
     Console.ReadKey();

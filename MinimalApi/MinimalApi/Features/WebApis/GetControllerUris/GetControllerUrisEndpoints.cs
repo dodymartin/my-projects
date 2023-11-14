@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public class GetControllerUrisEndpoints : ICarterModule
+public sealed class GetControllerUrisEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder parentGroup)
     {

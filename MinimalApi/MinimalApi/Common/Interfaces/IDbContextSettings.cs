@@ -1,4 +1,4 @@
-﻿using Stratos.Core;
+﻿using MinimalApi.Api.Core;
 
 namespace MinimalApi.Api.Common;
 

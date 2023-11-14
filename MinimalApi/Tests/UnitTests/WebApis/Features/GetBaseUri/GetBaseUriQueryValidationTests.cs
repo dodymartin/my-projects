@@ -4,7 +4,7 @@ namespace MinimalApi.Api.Tests.UnitTests.WebApis.Features.GetBaseUri;
 
 public class GetBaseUriQueryValidationTests
 {
-    private GetBaseUriQueryValidator _validator = new GetBaseUriQueryValidator();
+    private readonly GetBaseUriQueryValidator _validator = new();
 
     [Fact]
     public void GetBaseUriQuery_GoodIdGoodVersion_ReturnValidWithNoErrors()
