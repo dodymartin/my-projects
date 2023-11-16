@@ -6,11 +6,11 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.Databases;
 
-public record GetNameQuery(
+public sealed record GetNameQuery(
     int? FacilityId)
     : IRequest<ErrorOr<string?>>;
 
-public class GetNameQueryValidator : AbstractValidator<GetNameQuery>
+public sealed class GetNameQueryValidator : AbstractValidator<GetNameQuery>
 {
     public GetNameQueryValidator()
     {
@@ -18,16 +18,11 @@ public class GetNameQueryValidator : AbstractValidator<GetNameQuery>
     }
 }
 
-public class GetNameQueryHandler : IRequestHandler<GetNameQuery, ErrorOr<string?>>
+public sealed class GetNameQueryHandler(IOptions<AppSettings> appSettings, IDatabaseRepo databaseRepo) 
+    : IRequestHandler<GetNameQuery, ErrorOr<string?>>
 {
-    private readonly AppSettings _appSettings;
-    private readonly IDatabaseRepo _databaseRepo;
-
-    public GetNameQueryHandler(IOptions<AppSettings> appSettings, IDatabaseRepo databaseRepo)
-    {
-        _appSettings = appSettings.Value;
-        _databaseRepo = databaseRepo;
-    }
+    private readonly AppSettings _appSettings = appSettings.Value;
+    private readonly IDatabaseRepo _databaseRepo = databaseRepo;
 
     public async Task<ErrorOr<string?>> Handle(GetNameQuery queryRequest, CancellationToken cancellationToken)
     {

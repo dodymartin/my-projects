@@ -12,28 +12,23 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.ApiCallUsages;
 
-public record CreateApiCallUsageCommand(
+public sealed record CreateApiCallUsageCommand(
     EndpointFilterInvocationContext Context,
     EndpointFilterFactoryContext FilterFactoryContext,
     long ElapsedMilliseconds)
     : IRequest<ErrorOr<ApiCallUsageDto>>;
 
-public class CreateApiCallUsageCommandValidator : AbstractValidator<CreateApiCallUsageCommand>
+public sealed class CreateApiCallUsageCommandValidator : AbstractValidator<CreateApiCallUsageCommand>
 {
     public CreateApiCallUsageCommandValidator()
     { }
 }
 
-public class CreateApiCallUsageCommandHandler : IRequestHandler<CreateApiCallUsageCommand, ErrorOr<ApiCallUsageDto>>
+public sealed class CreateApiCallUsageCommandHandler(IMapper mapper, IBaseCrudRepo<ApiCallUsage, Guid> apiCallUsageRepo) 
+    : IRequestHandler<CreateApiCallUsageCommand, ErrorOr<ApiCallUsageDto>>
 {
-    private readonly IMapper _mapper;
-    private readonly IBaseCrudRepo<ApiCallUsage, Guid> _apiCallUsageRepo;
-
-    public CreateApiCallUsageCommandHandler(IMapper mapper, IBaseCrudRepo<ApiCallUsage, Guid> apiCallUsageRepo)
-    {
-        _mapper = mapper;
-        _apiCallUsageRepo = apiCallUsageRepo;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly IBaseCrudRepo<ApiCallUsage, Guid> _apiCallUsageRepo = apiCallUsageRepo;
 
     public async Task<ErrorOr<ApiCallUsageDto>> Handle(CreateApiCallUsageCommand commandRequest, CancellationToken cancellationToken)
     {
@@ -88,7 +83,7 @@ public class CreateApiCallUsageCommandHandler : IRequestHandler<CreateApiCallUsa
         return apiCallUsageDto;
     }
 
-    private static string GetMachineName(string ipAddress, string defaultMachineName)
+    private static string? GetMachineName(string? ipAddress, string? defaultMachineName)
     {
         var machineName = string.Empty;
         try

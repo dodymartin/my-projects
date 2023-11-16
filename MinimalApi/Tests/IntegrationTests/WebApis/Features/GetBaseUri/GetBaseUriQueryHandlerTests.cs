@@ -1,12 +1,14 @@
-﻿using MinimalApi.Api.Features.WebApis;
+﻿using FluentAssertions;
+using FluentAssertions.Execution;
+using MinimalApi.Api.Features.WebApis;
 using NSubstitute;
 
 namespace MinimalApi.Api.Tests.IntegrationTests.WebApis.Features.GetBaseUri;
 
 public class GetBaseUriQueryHandlerTests
 {
-    private IWebApiRepo _mockRepo;
-    private GetBaseUriQueryHandler _handler;
+    private readonly IWebApiRepo _mockRepo;
+    private readonly GetBaseUriQueryHandler _handler;
 
     public GetBaseUriQueryHandlerTests()
     {
@@ -39,11 +41,11 @@ public class GetBaseUriQueryHandlerTests
         var result = await _handler.Handle(queryRequest, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsError);
-            Assert.True(result.Value == dto.GetBaseUri());
-        });
+            result.IsError.Should().BeFalse();
+            result.Value.Should().BeEquivalentTo(dto.GetBaseUri());
+        };
     }
 
     [Fact]
@@ -62,11 +64,11 @@ public class GetBaseUriQueryHandlerTests
         var result = await _handler.Handle(queryRequest, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.True(result.IsError);
-            Assert.NotEmpty(result.Errors);
-            Assert.Single(result.Errors);
-        });
+            result.IsError.Should().BeTrue();
+            result.Errors.Should().NotBeNullOrEmpty();
+            result.Errors.Should().ContainSingle();
+        };
     }
 }

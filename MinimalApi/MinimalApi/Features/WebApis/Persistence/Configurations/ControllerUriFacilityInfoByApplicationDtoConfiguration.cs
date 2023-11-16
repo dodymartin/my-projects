@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-internal class ControllerUriFacilityInfoByApplicationDtoConfiguration : IEntityTypeConfiguration<ControllerUriFacilityInfoByApplicationDto>
+public sealed class ControllerUriFacilityInfoByApplicationDtoConfiguration : IEntityTypeConfiguration<ControllerUriFacilityInfoByApplicationDto>
 {
     public void Configure(EntityTypeBuilder<ControllerUriFacilityInfoByApplicationDto> builder)
     {

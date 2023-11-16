@@ -3,14 +3,10 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.Databases;
 
-public class DatabaseRepo : IDatabaseRepo
+public sealed class DatabaseRepo(IDatabaseDbContext dbContext) 
+    : IDatabaseRepo
 {
-    private readonly IDatabaseDbContext _dbContext;
-
-    public DatabaseRepo(IDatabaseDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    private readonly IDatabaseDbContext _dbContext = dbContext;
 
     public async Task<string?> GetCorporateDatabaseNameAsync(EnvironmentTypes environmentType, DatabaseSchemaTypes databaseSchemaType, CancellationToken cancellationToken)
         => await

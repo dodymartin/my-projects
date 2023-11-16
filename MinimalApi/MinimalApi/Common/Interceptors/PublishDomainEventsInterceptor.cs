@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace MinimalApi.Api.Common;
 
-public class PublishDomainEventsInterceptor : SaveChangesInterceptor
+public class PublishDomainEventsInterceptor(IPublisher mediator) : SaveChangesInterceptor
 {
-    private readonly IPublisher _mediator;
-
-    public PublishDomainEventsInterceptor(IPublisher mediator)
-    {
-        _mediator = mediator;
-    }
+    private readonly IPublisher _mediator = mediator;
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {

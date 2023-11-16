@@ -1,27 +1,27 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace MinimalApi.Api.Core;
 
-public class DatabaseInfo : IDatabase
+public sealed class DatabaseInfo : IDatabase
 {
-    public string Name { get; set; }
-    public string Sid { get; set; }
-    public string InitialCatalog { get; set; }
-    public ConnectionType ConnectionType { get; set; }
-    public string DataSource { get; set; }
-    public string UserName { get; set; }
-    public string EncryptedPassword { get; set; }
+    public required string Name { get; set; }
+    public string? Sid { get; set; }
+    public string? InitialCatalog { get; set; }
+    public required ConnectionType ConnectionType { get; set; }
+    public string? DataSource { get; set; }
+    public required string UserName { get; set; }
+    public required string EncryptedPassword { get; set; }
     public string Password => Encryptor.DecryptData(EncryptedPassword);
-    public string ConnectString => !string.IsNullOrEmpty(DataSource) ? GetConnectString(DataSource) : GetConnectString(Sid);
+    public string ConnectString => !string.IsNullOrEmpty(DataSource) 
+        ? GetConnectString(DataSource) 
+        : GetConnectString(Sid);
     public string DisplayName => Name != Sid ? $"{Name} ({Sid})" : Name;
 
     public override string ToString() => DisplayName;
 
-    public string GetConnectString(string dataSource) => GetConnectString(dataSource, UserName, Password);
+    public string GetConnectString(string? dataSource) => GetConnectString(dataSource, UserName, Password);
 
     public string GetConnectString(string userName, string password) => GetConnectString(Sid, userName, password);
 
-    public string GetConnectString(string dataSource, string userName, string password)
+    public string GetConnectString(string? dataSource, string userName, string password)
     {
         switch (ConnectionType)
         {

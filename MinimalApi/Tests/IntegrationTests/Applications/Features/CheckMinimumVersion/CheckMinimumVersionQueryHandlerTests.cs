@@ -1,4 +1,6 @@
-﻿using MinimalApi.Api.Features.Applications;
+﻿using FluentAssertions;
+using FluentAssertions.Execution;
+using MinimalApi.Api.Features.Applications;
 using NSubstitute;
 using ApplicationId = MinimalApi.Api.Features.Applications.ApplicationId;
 
@@ -6,8 +8,8 @@ namespace MinimalApi.Api.Tests.IntegrationTests.Applications.Features.CheckMinim
 
 public class CheckMinimumVersionQueryHandlerTests
 {
-    private IApplicationRepo _mockRepo;
-    private CheckMinimumVersionQueryHandler _handler;
+    private readonly IApplicationRepo _mockRepo;
+    private readonly CheckMinimumVersionQueryHandler _handler;
 
     public CheckMinimumVersionQueryHandlerTests()
     {
@@ -29,6 +31,9 @@ public class CheckMinimumVersionQueryHandlerTests
         var application = new Application
         {
             Id = ApplicationId.Create(queryRequest.ApplicationId!.Value),
+            ExeName = "",
+            FromDirectoryName = "",
+            Name = "",
             MinimumAssemblyVersion = "5.2",
         };
 
@@ -41,11 +46,11 @@ public class CheckMinimumVersionQueryHandlerTests
         var result = await _handler.Handle(queryRequest, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsError);
-            Assert.True(result.Value);
-        });
+            result.IsError.Should().BeFalse();
+            result.Value.Should().BeTrue();
+        };
     }
 
     [Fact]
@@ -62,6 +67,9 @@ public class CheckMinimumVersionQueryHandlerTests
         var application = new Application
         {
             Id = ApplicationId.Create(queryRequest.ApplicationId!.Value),
+            ExeName = "",
+            FromDirectoryName = "",
+            Name = "",
             MinimumAssemblyVersion = "",
         };
 
@@ -76,11 +84,11 @@ public class CheckMinimumVersionQueryHandlerTests
         var result = await _handler.Handle(queryRequest, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsError);
-            Assert.True(result.Value);
-        });
+            result.IsError.Should().BeFalse();
+            result.Value.Should().BeTrue();
+        };
     }
 
     [Fact]
@@ -97,6 +105,9 @@ public class CheckMinimumVersionQueryHandlerTests
         var application = new Application
         {
             Id = ApplicationId.Create(queryRequest.ApplicationId!.Value),
+            ExeName = "",
+            FromDirectoryName = "",
+            Name = "",
             MinimumAssemblyVersion = "5.2.1",
         };
 
@@ -109,11 +120,11 @@ public class CheckMinimumVersionQueryHandlerTests
         var result = await _handler.Handle(queryRequest, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsError);
-            Assert.False(result.Value);
-        });
+            result.IsError.Should().BeFalse();
+            result.Value.Should().BeFalse();
+        };
     }
 
     [Fact]
@@ -130,6 +141,9 @@ public class CheckMinimumVersionQueryHandlerTests
         var application = new Application
         {
             Id = ApplicationId.Create(queryRequest.ApplicationId!.Value),
+            ExeName = "",
+            FromDirectoryName = "",
+            Name = "",
             MinimumAssemblyVersion = ""
         };
 
@@ -144,11 +158,11 @@ public class CheckMinimumVersionQueryHandlerTests
         var result = await _handler.Handle(queryRequest, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsError);
-            Assert.False(result.Value);
-        });
+            result.IsError.Should().BeFalse();
+            result.Value.Should().BeFalse();
+        };
     }
 
     [Fact]
@@ -169,11 +183,11 @@ public class CheckMinimumVersionQueryHandlerTests
         var result = await _handler.Handle(queryRequest, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.True(result.IsError);
-            Assert.NotEmpty(result.Errors);
-            Assert.Single(result.Errors);
-        });
+            result.IsError.Should().BeTrue();
+            result.Errors.Should().NotBeNullOrEmpty();
+            result.Errors.Should().ContainSingle();
+        };
     }
 }

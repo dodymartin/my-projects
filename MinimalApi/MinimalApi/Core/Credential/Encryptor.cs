@@ -16,7 +16,7 @@ public static class Encryptor
         var dataBytes = Encoding.UTF8.GetBytes(data);
 
         using var pdb = new PasswordDeriveBytes(password, Encoding.UTF8.GetBytes("Salt"));
-        using var aes = Aes.Create("AesManaged");
+        using var aes = Aes.Create();
         aes.Padding = PaddingMode.ISO10126;
 
         using var encryptor = aes.CreateEncryptor(pdb.GetBytes(16), pdb.GetBytes(16));
@@ -38,7 +38,7 @@ public static class Encryptor
         var dataBytes = Convert.FromBase64String(data);
 
         using var pdb = new PasswordDeriveBytes(password, Encoding.UTF8.GetBytes("Salt"));
-        using var aes = Aes.Create("AesManaged");
+        using var aes = Aes.Create();
         aes.Padding = PaddingMode.ISO10126;
 
         using var decryptor = aes.CreateDecryptor(pdb.GetBytes(16), pdb.GetBytes(16));

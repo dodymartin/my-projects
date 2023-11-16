@@ -2,13 +2,13 @@
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public class WebApi : AggregateRoot<WebApiId, int> //EntityBase<WebApi, WebApiId>
+public sealed class WebApi : AggregateRoot<WebApiId, int> //EntityBase<WebApi, WebApiId>
 {
-    private readonly List<WebApiController> _controllers = new();
-    private readonly List<WebApiVersion> _versions = new();
+    private readonly List<WebApiController> _controllers = [];
+    private readonly List<WebApiVersion> _versions = [];
 
-    public ApplicationId ApplicationId { get; set; }
-    public bool UseHttps { get; set; }
+    public required ApplicationId ApplicationId { get; set; }
+    public required bool UseHttps { get; set; }
 
     public IReadOnlyList<WebApiController> Controllers => _controllers.AsReadOnly();
     public IReadOnlyList<WebApiVersion> Versions => _versions.AsReadOnly();
@@ -16,7 +16,7 @@ public class WebApi : AggregateRoot<WebApiId, int> //EntityBase<WebApi, WebApiId
     public string? GetBaseUriByApplicationVersion(bool useHttps, string applicationVersion)
     {
         var version = _versions.FirstOrDefault(x => 
-            applicationVersion.StartsWith(x.Version.Substring(0, applicationVersion.Length)));
+            applicationVersion.StartsWith(x.Version[..applicationVersion.Length]));
         if (version is not null)
             return $@"http{(useHttps ? "s" : "")}://+:{version.Port}";
         return default;

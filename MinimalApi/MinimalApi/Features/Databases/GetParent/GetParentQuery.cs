@@ -4,11 +4,11 @@ using MediatR;
 
 namespace MinimalApi.Api.Features.Databases;
 
-public record GetParentQuery(
+public sealed record GetParentQuery(
     string ChildDatabaseName)
     : IRequest<ErrorOr<string?>>;
 
-public class GetParentQueryValidator : AbstractValidator<GetParentQuery>
+public sealed class GetParentQueryValidator : AbstractValidator<GetParentQuery>
 {
     public GetParentQueryValidator()
     {
@@ -16,14 +16,10 @@ public class GetParentQueryValidator : AbstractValidator<GetParentQuery>
     }
 }
 
-public class GetParentQueryHandler : IRequestHandler<GetParentQuery, ErrorOr<string?>>
+public sealed class GetParentQueryHandler(IDatabaseRepo databaseRepo) 
+    : IRequestHandler<GetParentQuery, ErrorOr<string?>>
 {
-    private readonly IDatabaseRepo _databaseRepo;
-
-    public GetParentQueryHandler(IDatabaseRepo databaseRepo)
-    {
-        _databaseRepo = databaseRepo;
-    }
+    private readonly IDatabaseRepo _databaseRepo = databaseRepo;
 
     public async Task<ErrorOr<string?>> Handle(GetParentQuery request, CancellationToken cancellationToken)
     {

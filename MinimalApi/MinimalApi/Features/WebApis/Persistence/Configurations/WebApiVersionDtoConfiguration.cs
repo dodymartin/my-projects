@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public class WebApiVersionDtoConfiguration : IEntityTypeConfiguration<WebApiVersionDto>
+public sealed class WebApiVersionDtoConfiguration : IEntityTypeConfiguration<WebApiVersionDto>
 {
     public void Configure(EntityTypeBuilder<WebApiVersionDto> builder)
     {

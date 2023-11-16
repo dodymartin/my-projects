@@ -6,7 +6,7 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public record GetControllerUrisQuery(
+public sealed record GetControllerUrisQuery(
     int? ApplicationId,
     string? ApplicationName,
     string ApplicationVersion,
@@ -15,7 +15,7 @@ public record GetControllerUrisQuery(
     string? MachineName)
     : IRequest<ErrorOr<IList<GetControllerUrisResponse>>>;
 
-public class GetControllerUrisQueryValidator : AbstractValidator<GetControllerUrisQuery>
+public sealed class GetControllerUrisQueryValidator : AbstractValidator<GetControllerUrisQuery>
 {
     public GetControllerUrisQueryValidator()
     {
@@ -27,17 +27,11 @@ public class GetControllerUrisQueryValidator : AbstractValidator<GetControllerUr
     }
 }
 
-public class GetControllerUrisQueryHandler : IRequestHandler<GetControllerUrisQuery, ErrorOr<IList<GetControllerUrisResponse>>>
+public sealed class GetControllerUrisQueryHandler(IOptions<AppSettings> appSettings, IWebApiRepo webApiRepo)
+    : IRequestHandler<GetControllerUrisQuery, ErrorOr<IList<GetControllerUrisResponse>>>
 {
-    private readonly AppSettings _appSettings;
-    private readonly IWebApiRepo _webApiRepo;
-
-    public GetControllerUrisQueryHandler(IOptions<AppSettings> appSettings,
-        IWebApiRepo webApiRepo)
-    {
-        _appSettings = appSettings.Value;
-        _webApiRepo = webApiRepo;
-    }
+    private readonly AppSettings _appSettings = appSettings.Value;
+    private readonly IWebApiRepo _webApiRepo = webApiRepo;
 
     public async Task<ErrorOr<IList<GetControllerUrisResponse>>> Handle(GetControllerUrisQuery queryRequest, CancellationToken cancellationToken)
     {

@@ -5,11 +5,11 @@ using MinimalApi.Api.Core;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public record GetPingsQuery(
+public sealed record GetPingsQuery(
     string[] ServiceNames)
     : IRequest<ErrorOr<IDictionary<string, string>>>;
 
-public class GetPingUrisQueryValidator : AbstractValidator<GetPingsQuery>
+public sealed class GetPingUrisQueryValidator : AbstractValidator<GetPingsQuery>
 {
     public GetPingUrisQueryValidator()
     {
@@ -17,14 +17,10 @@ public class GetPingUrisQueryValidator : AbstractValidator<GetPingsQuery>
     }
 }
 
-public class GetPingUrisQueryHandler : IRequestHandler<GetPingsQuery, ErrorOr<IDictionary<string, string>>>
+public sealed class GetPingUrisQueryHandler(IWebApiRepo webApiRepo) 
+    : IRequestHandler<GetPingsQuery, ErrorOr<IDictionary<string, string>>>
 {
-    private readonly IWebApiRepo _webApiRepo;
-
-    public GetPingUrisQueryHandler(IWebApiRepo webApiRepo)
-    {
-        _webApiRepo = webApiRepo;
-    }
+    private readonly IWebApiRepo _webApiRepo = webApiRepo;
 
     public async Task<ErrorOr<IDictionary<string, string>>> Handle(GetPingsQuery queryRequest, CancellationToken cancellationToken)
     {

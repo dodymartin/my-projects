@@ -4,15 +4,15 @@ namespace MinimalApi.Api.Features.Applications;
 
 public class Application : AggregateRoot<ApplicationId, int> //EntityBase<Application, ApplicationId>
 {
-    public string ExeName { get; set; }
-    public string FromDirectoryName { get; set; }
+    public required string ExeName { get; set; }
+    public required string FromDirectoryName { get; set; }
     public string? MinimumAssemblyVersion { get; set; }
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
-    private readonly List<ApplicationFacility> _facilities = new();
+    private readonly List<ApplicationFacility> _facilities = [];
     public IReadOnlyList<ApplicationFacility> Facilities => _facilities.AsReadOnly();
 
-    private readonly List<ApplicationVersion> _versions = new();
+    private readonly List<ApplicationVersion> _versions = [];
     public IReadOnlyList<ApplicationVersion> Versions => _versions.AsReadOnly();
 
     public static bool CheckVersion(string? minimumVersion, string version)

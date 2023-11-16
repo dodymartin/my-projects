@@ -4,18 +4,13 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.ApiCallUsages;
 
-public class BaseCrudRepo<TEntity, TKey> : IBaseCrudRepo<TEntity, TKey>
+public class BaseCrudRepo<TEntity, TKey>(IApiCallUsageDbContext context) : IBaseCrudRepo<TEntity, TKey>
     where TEntity : class
 {
-    protected readonly DbContext _dbContext;
+    protected readonly DbContext _dbContext = (DbContext)context;
 
     private readonly DbSet<TEntity>? _dbSet;
     protected DbSet<TEntity> DbSet => _dbSet ?? _dbContext.Set<TEntity>();
-
-    public BaseCrudRepo(IApiCallUsageDbContext context)
-    {
-        _dbContext = (DbContext)context;
-    }
 
     #region IBaseRepo
 

@@ -1,10 +1,12 @@
-﻿using MinimalApi.Api.Features.Applications;
+﻿using FluentAssertions.Execution;
+using FluentAssertions;
+using MinimalApi.Api.Features.Applications;
 
 namespace MinimalApi.Api.Tests.IntegrationTests.Applications.Features.CheckMinimumVersion;
 
 public class CheckMinimumVersionQueryValidationTests
 {
-    private CheckMinimumVersionQueryValidator _validator = new CheckMinimumVersionQueryValidator();
+    private readonly CheckMinimumVersionQueryValidator _validator = new();
 
     [Fact]
     public void CheckMinimumVersionQuery_AllGoodData_ReturnValidWithNoErrors()
@@ -21,11 +23,11 @@ public class CheckMinimumVersionQueryValidationTests
         var result = _validator.Validate(queryRequest);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.True(result.IsValid);
-            Assert.Empty(result.Errors);
-        });
+            result.IsValid.Should().BeTrue();
+            result.Errors.Should().BeEmpty();
+        };
     }
 
     [Fact]
@@ -43,12 +45,12 @@ public class CheckMinimumVersionQueryValidationTests
         var result = _validator.Validate(queryRequest);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsValid);
-            Assert.NotEmpty(result.Errors);
-            Assert.Equal(3, result.Errors.Count);
-        });
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().NotBeNullOrEmpty();
+            result.Errors.Should().HaveCount(3);
+        };
     }
 
     [Fact]
@@ -66,12 +68,12 @@ public class CheckMinimumVersionQueryValidationTests
         var result = _validator.Validate(queryRequest);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsValid);
-            Assert.NotEmpty(result.Errors);
-            Assert.Equal(2, result.Errors.Count);
-        });
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().NotBeNullOrEmpty();
+            result.Errors.Should().HaveCount(2);
+        };
     }
 
     [Fact]
@@ -89,11 +91,11 @@ public class CheckMinimumVersionQueryValidationTests
         var result = _validator.Validate(queryRequest);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsValid);
-            Assert.NotEmpty(result.Errors);
-            Assert.Single(result.Errors);
-        });
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().NotBeNullOrEmpty();
+            result.Errors.Should().ContainSingle();
+        };
     }
 }

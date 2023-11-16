@@ -4,12 +4,12 @@ using MediatR;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public record GetBaseUriQuery(
+public sealed record GetBaseUriQuery(
     int? ApplicationId,
     string? ApplicationVersion)
     : IRequest<ErrorOr<string?>>;
 
-public class GetBaseUriQueryValidator : AbstractValidator<GetBaseUriQuery>
+public sealed class GetBaseUriQueryValidator : AbstractValidator<GetBaseUriQuery>
 {
     public GetBaseUriQueryValidator()
     {
@@ -18,14 +18,10 @@ public class GetBaseUriQueryValidator : AbstractValidator<GetBaseUriQuery>
     }
 }
 
-public class GetBaseUriQueryHandler : IRequestHandler<GetBaseUriQuery, ErrorOr<string?>>
+public sealed class GetBaseUriQueryHandler(IWebApiRepo webApiRepo) 
+    : IRequestHandler<GetBaseUriQuery, ErrorOr<string?>>
 {
-    private readonly IWebApiRepo _webApiRepo;
-
-    public GetBaseUriQueryHandler(IWebApiRepo webApiRepo)
-    {
-        _webApiRepo = webApiRepo;
-    }
+    private readonly IWebApiRepo _webApiRepo = webApiRepo;
 
     public async Task<ErrorOr<string?>> Handle(GetBaseUriQuery queryRequest, CancellationToken cancellationToken)
     {

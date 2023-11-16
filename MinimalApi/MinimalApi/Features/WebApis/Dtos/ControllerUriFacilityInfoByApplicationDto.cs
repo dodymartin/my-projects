@@ -2,7 +2,7 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public record ControllerUriFacilityInfoByApplicationDto(
+public sealed record ControllerUriFacilityInfoByApplicationDto(
     string Address,
     int ApplicationId,
     string ApplicationName,

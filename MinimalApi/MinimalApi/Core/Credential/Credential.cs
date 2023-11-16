@@ -2,13 +2,13 @@ using System.Collections.ObjectModel;
 
 namespace MinimalApi.Api.Core;
 
-public class Credential : ICredential
+public sealed class Credential : ICredential
 {
-    public string Domain { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public Collection<string> OldPasswords { get; set; }
-    public bool IsDecrypted { get; set; }
+    public string? Domain { get; set; }
+    public required string Username { get; set; }
+    public required string Password { get; set; }
+    public Collection<string> OldPasswords { get; set; } = [];
+    public required bool IsDecrypted { get; set; }
 
     public void DecryptPassword(string key)
     {
@@ -25,7 +25,7 @@ public class Credential : ICredential
 
     public string ToSqlPlusFormat()
     {
-        if (Username.ToUpper() == "SYS")
+        if (Username.ToUpper().Equals("SYS"))
             return Username + "/" + Password + " AS SYSDBA";
         return Username + "/" + Password;
     }

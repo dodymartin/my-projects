@@ -5,25 +5,17 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.ApiCallUsages;
 
-public class ApiCallUsageDbContext : DbContext, IApiCallUsageDbContext
+public class ApiCallUsageDbContext(ILogger<ApiCallUsageDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApiCallUsageDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor) 
+    : DbContext(options), IApiCallUsageDbContext
 {
-    private readonly ILogger<ApiCallUsageDbContext> _logger;
-    private readonly AppSettings _appSettings;
-    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor;
+    private readonly ILogger<ApiCallUsageDbContext> _logger = logger;
+    private readonly AppSettings _appSettings = appSettings.Value;
+    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
 
-    public IDbContextSettings Settings { get; }
+    public IDbContextSettings Settings { get; } = settings;
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade IApiCallUsageDbContext.Database => Database;
 
     public DbSet<ApiCallUsage> ApiCallUsages { get; private set; } = null!;
-
-    public ApiCallUsageDbContext(ILogger<ApiCallUsageDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApiCallUsageDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor)
-        : base(options)
-    {
-        _logger = logger;
-        _appSettings = appSettings.Value;
-        Settings = settings;
-        _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
-    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

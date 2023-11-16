@@ -5,25 +5,17 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.Databases;
 
-public class DatabaseDbContext : DbContext, IDatabaseDbContext
+public sealed class DatabaseDbContext(ILogger<DatabaseDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<DatabaseDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor) 
+    : DbContext(options), IDatabaseDbContext
 {
-    private readonly ILogger<DatabaseDbContext> _logger;
-    private readonly AppSettings _appSettings;
-    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor;
+    private readonly ILogger<DatabaseDbContext> _logger = logger;
+    private readonly AppSettings _appSettings = appSettings.Value;
+    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
 
-    public IDbContextSettings Settings { get; }
+    public IDbContextSettings Settings { get; } = settings;
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade IDatabaseDbContext.Database => Database;
 
     public DbSet<Database> Databases { get; private set; } = null!;
-
-    public DatabaseDbContext(ILogger<DatabaseDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<DatabaseDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor)
-        : base(options)
-    {
-        _logger = logger;
-        _appSettings = appSettings.Value;
-        Settings = settings;
-        _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
-    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

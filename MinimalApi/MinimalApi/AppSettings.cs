@@ -8,11 +8,11 @@ public class AppSettings
     public const string ConfigurationSection = "MinimalApi.Api.AppSettings";
 
     [Required]
-    public string DatabaseName { get; set; }
+    public required string DatabaseName { get; set; }
     [Required, EnumDataType(typeof(EnvironmentTypes))]
-    public string EnvironmentType { get; set; }
-    public bool LogCallers { get; set; } = true;
-    public string NamesDirectoryPath
+    public required string EnvironmentType { get; set; }
+    public required bool LogCallers { get; set; } = true;
+    public string? NamesDirectoryPath
     {
         get => Oracle.ManagedDataAccess.Client.OracleConfiguration.NamesDirectoryPath ?? string.Empty;
         set
@@ -28,7 +28,7 @@ public class AppSettings
                 Oracle.ManagedDataAccess.Client.OracleConfiguration.NamesDirectoryPath = value;
         }
     }
-    public string TnsAdmin
+    public string? TnsAdmin
     {
         get => Oracle.ManagedDataAccess.Client.OracleConfiguration.TnsAdmin;
         set
@@ -44,5 +44,5 @@ public class AppSettings
                 Oracle.ManagedDataAccess.Client.OracleConfiguration.TnsAdmin = value;
         }
     }
-    public bool ShowSql { get; set; } = false;
+    public required bool ShowSql { get; set; } = false;
 }

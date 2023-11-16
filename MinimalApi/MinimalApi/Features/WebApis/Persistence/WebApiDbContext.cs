@@ -5,13 +5,14 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public class WebApiDbContext : DbContext, IWebApiDbContext
+public sealed class WebApiDbContext(ILogger<WebApiDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<WebApiDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor) 
+    : DbContext(options), IWebApiDbContext
 {
-    private readonly ILogger<WebApiDbContext> _logger;
-    private readonly AppSettings _appSettings;
-    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor;
+    private readonly ILogger<WebApiDbContext> _logger = logger;
+    private readonly AppSettings _appSettings = appSettings.Value;
+    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
 
-    public IDbContextSettings Settings { get; }
+    public IDbContextSettings Settings { get; } = settings;
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade IWebApiDbContext.Database => Database;
 
     public DbSet<Application> Applications { get; private set; } = null!;
@@ -19,15 +20,6 @@ public class WebApiDbContext : DbContext, IWebApiDbContext
     public DbSet<ControllerUriInfoByApplicationDto> ControllerUriInfoByApplicationDtos { get; private set; } = null!;
     public DbSet<WebApi> WebApis { get; private set; } = null!;
     public DbSet<WebApiVersionDto> WebApiVersionDtos { get; private set; } = null!;
-
-    public WebApiDbContext(ILogger<WebApiDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<WebApiDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor)
-        : base(options)
-    {
-        _logger = logger;
-        _appSettings = appSettings.Value;
-        Settings = settings;
-        _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
-    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

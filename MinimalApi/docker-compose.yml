@@ -26,13 +26,3 @@ services:
     volumes:
       - /c/repos/douglasadams/my-projects/minimalapi/minimalapi/bin/debug/net7.0/v6/logs:/app/logs
       - /c/repos/douglasadams/my-projects:/app/configbysite
-      
-  configuration-v7:
-    image: web-api-configuration:v7
-    environment:
-      - HOSTNAME=$COMPUTERNAME
-    labels:
-      - "traefik.http.routers.configuration-v7.rule=PathPrefix(`/api/configuration/v7`)"
-    volumes:
-      - /c/repos/douglasadams/my-projects/minimalapi/minimalapi/bin/debug/net7.0/v7/logs:/app/logs
-      - /c/repos/douglasadams/my-projects:/app/configbysite

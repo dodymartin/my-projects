@@ -2,8 +2,8 @@
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public class WebApiVersion : Entity<WebApiVersionId> //EntityBase<WebApiVersion, WebApiVersionId>
+public sealed class WebApiVersion : Entity<WebApiVersionId> //EntityBase<WebApiVersion, WebApiVersionId>
 {
-    public int Port { get; set; }
-    public string Version { get; set; }
+    public required int Port { get; set; }
+    public required string Version { get; set; }
 }

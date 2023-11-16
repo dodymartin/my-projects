@@ -2,7 +2,7 @@
 
 namespace MinimalApi.Api.Features.Databases;
 
-public class Facility : AggregateRoot<FacilityId, int> //EntityBase<Facility, FacilityId>
+public sealed class Facility : AggregateRoot<FacilityId, int> //EntityBase<Facility, FacilityId>
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 }

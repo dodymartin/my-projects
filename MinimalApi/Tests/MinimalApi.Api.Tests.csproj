@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -28,19 +28,6 @@
 
   <ItemGroup>
     <Folder Include="IntegrationTests\ApiCallUsages\Features\CreateApiCallUsage\" />
-    <Folder Include="IntegrationTests\Databases\Features\GetCorporate\" />
-    <Folder Include="IntegrationTests\Databases\Features\GetName\" />
-    <Folder Include="IntegrationTests\Databases\Features\GetParent\" />
-    <Folder Include="IntegrationTests\WebApis\Features\GetControllerUris\" />
-    <Folder Include="IntegrationTests\WebApis\Features\GetPingUris\" />
-    <Folder Include="IntegrationTests\WebApis\Features\GetPing\" />
-    <Folder Include="UnitTests\ApiCallUsages\Features\CreateApiCallUsage\" />
-    <Folder Include="UnitTests\Databases\Features\GetCorporate\" />
-    <Folder Include="UnitTests\Databases\Features\GetName\" />
-    <Folder Include="UnitTests\Databases\Features\GetParent\" />
-    <Folder Include="UnitTests\WebApis\Features\GetControllerUris\" />
-    <Folder Include="UnitTests\WebApis\Features\GetPingUris\" />
-    <Folder Include="UnitTests\WebApis\Features\GetPing\" />
   </ItemGroup>
 
   <ItemGroup>

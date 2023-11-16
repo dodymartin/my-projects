@@ -1,4 +1,3 @@
-using System;
 using Newtonsoft.Json;
 
 namespace MinimalApi.Api.Core;
@@ -23,42 +22,9 @@ public static class CoreMethods
                     optional: false,
                     reloadOnChange: true)
                 .AddEnvironmentVariables();
-
-        //var appSettingsPath = Path.Combine(configPath, "appsettings.json");
-        //var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        //if (!string.IsNullOrEmpty(environment))
-        //{
-        //    appSettingsPath = Path.Combine(configPath, $"appsettings.{environment.ToLower()}.json");
-
-        //    if (File.Exists(Path.Combine(configPath, appSettingsPath)))
-        //    {
-        //        Console.WriteLine($"Loading {appSettingsPath}");
-        //        return
-        //            new ConfigurationBuilder()
-        //                .SetBasePath(configPath)
-        //                .AddJsonFile("nlog.json",
-        //                    optional: false,
-        //                    reloadOnChange: true)
-        //                .AddJsonFile(appSettingsPath,
-        //                    optional: isOptional,
-        //                    reloadOnChange: true)
-        //                .AddEnvironmentVariables();
-        //    }
-        //}
-
-        //Console.WriteLine($"Loading {appSettingsPath}");
-        //return
-        //    new ConfigurationBuilder()
-        //        .AddJsonFile("nlog.json",
-        //            optional: false,
-        //            reloadOnChange: true)
-        //        .AddJsonFile(appSettingsPath,
-        //            optional: isOptional,
-        //            reloadOnChange: true)
-        //        .AddEnvironmentVariables();
     }
 
-    public static T FindAndLoad<T>(string configPath, string fileName)
+    public static T? FindAndLoad<T>(string configPath, string fileName)
     {
         var filePath = FindFileUpTree(configPath, fileName);
         if (!File.Exists(filePath))
@@ -66,7 +32,7 @@ public static class CoreMethods
         return DeserializeFromJsonFile<T>(filePath);
     }
 
-    public static T FindAndLoad<T>(string configPath, string configSitePath, string fileName)
+    public static T? FindAndLoad<T>(string configPath, string configSitePath, string fileName)
     {
         var filePath = Path.Combine(configPath, fileName);
         if (!File.Exists(filePath))
@@ -140,12 +106,12 @@ public static class CoreMethods
 
     #region To/From JsonFile
 
-    public static T DeserializeFromJsonFile<T>(string path, string name)
+    public static T? DeserializeFromJsonFile<T>(string path, string name)
     {
         return DeserializeFromJsonFile<T>(Path.Combine(path, name));
     }
 
-    public static T DeserializeFromJsonFile<T>(string fullFileName, bool required = true)
+    public static T? DeserializeFromJsonFile<T>(string fullFileName, bool required = true)
     {
         if (!File.Exists(fullFileName))
             if (required)
@@ -153,7 +119,7 @@ public static class CoreMethods
             else
                 return default;
 
-        T returnValue = default;
+        T? returnValue = default;
         using (var stream = new StreamReader(fullFileName))
         {
             returnValue = JsonConvert.DeserializeObject<T>(stream.ReadToEnd(), JsonSerializerSettings);
@@ -169,8 +135,8 @@ public static class CoreMethods
     public static void SerializeToJsonFile(object item, string fullFileName)
     {
         var fi = new FileInfo(fullFileName);
-        if (!Directory.Exists(fi.DirectoryName))
-            Directory.CreateDirectory(fi.DirectoryName);
+        if (fi is not null && !Directory.Exists(fi.DirectoryName))
+            Directory.CreateDirectory(fi.DirectoryName!);
 
         var json = JsonConvert.SerializeObject(item, JsonSerializerSettings);
         using var stream = new StreamWriter(fullFileName);

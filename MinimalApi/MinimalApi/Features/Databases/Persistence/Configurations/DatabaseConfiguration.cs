@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MinimalApi.Api.Features.Databases;
 
-internal class DatabaseConfiguration : IEntityTypeConfiguration<Database>
+public sealed class DatabaseConfiguration : IEntityTypeConfiguration<Database>
 {
     public void Configure(EntityTypeBuilder<Database> builder)
     {

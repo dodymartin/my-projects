@@ -16,7 +16,7 @@ using MinimalApi.Api.Features.Databases;
 using MinimalApi.Api.Features.WebApis;
 using NLog.Extensions.Logging;
 
-bool.TryParse(Environment.GetEnvironmentVariable("DOCKER_RUNNING"), out var dockerRunning);
+_ = bool.TryParse(Environment.GetEnvironmentVariable("DOCKER_RUNNING"), out var dockerRunning);
 
 if (Environment.UserInteractive && !dockerRunning)
 {
@@ -141,15 +141,19 @@ try
     builder.Services.AddCarter();
     builder.Services.AddMapster();
 
+    #region Add Mediator
+
     builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
         .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
     builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-    builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+    #endregion
 
-    builder.Services.TryAddScoped<PublishDomainEventsInterceptor>();
+    #region Add Database Services
+
     builder.Services.TryAddScoped<IDbContextSettings, DbContextSettings>();
+
     builder.Services.AddDbContext<IApiCallUsageDbContext, ApiCallUsageDbContext>();
     builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
     builder.Services.AddDbContext<IDatabaseDbContext, DatabaseDbContext>();
@@ -157,26 +161,16 @@ try
 
     builder.Services.TryAddScoped<IBaseCrudRepo<ApiCallUsage, Guid>, BaseCrudRepo<ApiCallUsage, Guid>>();
 
+    #endregion
+
+    builder.Services.TryAddScoped<PublishDomainEventsInterceptor>();
+
     // Using Scrutor ... Register all *Repo classes to DI
     builder.Services.Scan(scan => scan
         .FromCallingAssembly()
         .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repo")))
         .AsMatchingInterface()
         .WithScopedLifetime());
-
-    //// Using Scrutor ... Register all *Service classes to DI        
-    //builder.Services.Scan(scan => scan
-    //    .FromCallingAssembly()
-    //    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service")))
-    //    .AsSelf()
-    //    .WithScopedLifetime());
-
-    //// Using Scrutor ... Register all *Validator classes to DI
-    //builder.Services.Scan(scan => scan
-    //    .FromCallingAssembly()
-    //    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Validator")))
-    //    .AsSelf()
-    //    .WithSingletonLifetime());
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -188,17 +182,17 @@ try
     // Change to use minimal api pattern at 22:15 in
     // https://www.youtube.com/watch?v=gMwAhKddHYQ&list=PLzYkqgWkHPKBcDIP5gzLfASkQyTdy0t4k&index=4
     // for global unhandled exceptions
-    app.Use(async (ctx, next) =>
+    _ = app.Use(async (ctx, next) =>
     {
         try
         {
             if (dockerRunning)
-                ctx.Response.Headers.Add("Container-Id", Environment.MachineName);
+                ctx.Response.Headers.Append("Container-Id", Environment.MachineName);
             await next();
         }
         catch (Exception ex)
         {
-            app.Logger.LogError(ex.ToString());
+            app.Logger.LogError("{error}", ex.ToString());
             ctx.Response.StatusCode = 500;
             await ctx.Response.WriteAsync("An error has occured, check api log file for details.");
         }
@@ -206,7 +200,7 @@ try
 
     #endregion
 
-    #region Enable buffering
+    #region Enable request buffering
 
     // Enables HttpRequest.Body to not be forward-only,
     // so we can log AND process it
@@ -234,7 +228,7 @@ try
     #region Add endpoints
 
     // Create the base url to host
-    var group = app.MapGroup("api/configuration/v8")
+    var group = app.MapGroup("api/configuration/v6")
         .AddEndpointFilter<CallUsageFilter>();
 
     // Add detailed urls to base group

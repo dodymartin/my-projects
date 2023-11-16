@@ -5,24 +5,16 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.ApiCallUsages;
 
-public class CallUsageFilter : IEndpointFilter
+public class CallUsageFilter(ILogger<CallUsageFilter> logger, IOptions<AppSettings> appSettings, IDbContextSettings dbContextSettings, ISender mediator, EndpointFilterFactoryContext filterFactoryContext) 
+    : IEndpointFilter
 {
-    private readonly ILogger<CallUsageFilter> _logger;
-    private readonly IDbContextSettings _dbContextSettings;
-    private readonly ISender _mediator;
-    private readonly AppSettings _appSettings;
-    private readonly EndpointFilterFactoryContext _filterFactoryContext;
+    private readonly ILogger<CallUsageFilter> _logger = logger;
+    private readonly IDbContextSettings _dbContextSettings = dbContextSettings;
+    private readonly ISender _mediator = mediator;
+    private readonly AppSettings _appSettings = appSettings.Value;
+    private readonly EndpointFilterFactoryContext _filterFactoryContext = filterFactoryContext;
 
-    public CallUsageFilter(ILogger<CallUsageFilter> logger, IOptions<AppSettings> appSettings, IDbContextSettings dbContextSettings, ISender mediator, EndpointFilterFactoryContext filterFactoryContext)
-    {
-        _logger = logger;
-        _dbContextSettings = dbContextSettings;
-        _mediator = mediator;
-        _appSettings = appSettings.Value;
-        _filterFactoryContext = filterFactoryContext;
-    }
-
-    public async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var sw = new Stopwatch();
         sw.Start();
@@ -34,8 +26,8 @@ public class CallUsageFilter : IEndpointFilter
 
         if (apiCallUsageResponse.IsError)
         {
-            apiCallUsageResponse.Errors.ForEach(x => _logger.LogWarning(x.Description));
-            return result;
+            apiCallUsageResponse.Errors.ForEach(x => _logger.LogWarning("{warning}", x.Description));
+            return result!;
         }
 
         var apiCallUsageDto = apiCallUsageResponse.Value;
@@ -55,6 +47,6 @@ public class CallUsageFilter : IEndpointFilter
             apiCallUsageDto.BasicUsername,
             apiCallUsageDto.HasAuthorizationHeader,
             apiCallUsageDto.ElapsedMilliseconds);
-        return result;
+        return result!;
     }
 }

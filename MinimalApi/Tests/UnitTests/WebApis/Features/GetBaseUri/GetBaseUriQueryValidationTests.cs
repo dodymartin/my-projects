@@ -1,4 +1,6 @@
-﻿using MinimalApi.Api.Features.WebApis;
+﻿using FluentAssertions.Execution;
+using FluentAssertions;
+using MinimalApi.Api.Features.WebApis;
 
 namespace MinimalApi.Api.Tests.UnitTests.WebApis.Features.GetBaseUri;
 
@@ -19,11 +21,11 @@ public class GetBaseUriQueryValidationTests
         var result = _validator.Validate(queryRequest);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.True(result.IsValid);
-            Assert.Empty(result.Errors);
-        });
+            result.IsValid.Should().BeTrue();
+            result.Errors.Should().BeEmpty();
+        };
     }
 
     [Fact]
@@ -39,12 +41,12 @@ public class GetBaseUriQueryValidationTests
         var result = _validator.Validate(queryRequest);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsValid);
-            Assert.NotEmpty(result.Errors);
-            Assert.Single(result.Errors);
-        });
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().NotBeNullOrEmpty();
+            result.Errors.Should().ContainSingle();
+        };
     }
 
     [Fact]
@@ -60,12 +62,12 @@ public class GetBaseUriQueryValidationTests
         var result = _validator.Validate(queryRequest);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsValid);
-            Assert.NotEmpty(result.Errors);
-            Assert.Single(result.Errors);
-        });
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().NotBeNullOrEmpty();
+            result.Errors.Should().ContainSingle();
+        };
     }
 
     [Fact]
@@ -81,11 +83,11 @@ public class GetBaseUriQueryValidationTests
         var result = _validator.Validate(queryRequest);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsValid);
-            Assert.NotEmpty(result.Errors);
-            Assert.Equal(2, result.Errors.Count);
-        });
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().NotBeNullOrEmpty();
+            result.Errors.Should().HaveCount(2);
+        };
     }
 }

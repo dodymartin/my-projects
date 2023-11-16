@@ -3,10 +3,10 @@ namespace MinimalApi.Api.Core;
 public interface IDatabase
 {
     string Name { get; set; }
-    string Sid { get; set; }
-    string InitialCatalog { get; set; }
+    string? Sid { get; set; }
+    string? InitialCatalog { get; set; }
     ConnectionType ConnectionType { get; set; }
-    string DataSource { get; set; }
+    string? DataSource { get; set; }
     string UserName { get; set; }
     string EncryptedPassword { get; set; }
     string Password { get; }

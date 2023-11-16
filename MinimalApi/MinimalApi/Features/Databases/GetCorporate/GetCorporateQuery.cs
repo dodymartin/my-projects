@@ -6,28 +6,23 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.Databases;
 
-public record GetCorporateQuery(
+public sealed record GetCorporateQuery(
     DatabaseSchemaTypes DatabaseSchemaType)
     : IRequest<ErrorOr<string?>>;
 
-public class GetCorporateQueryHandler : IRequestHandler<GetCorporateQuery, ErrorOr<string?>>
+public sealed class GetCorporateQueryValidator : AbstractValidator<GetCorporateQuery>
 {
-    private readonly AppSettings _appSettings;
-    private readonly IDatabaseRepo _databaseRepo;
-
-    public GetCorporateQueryHandler(IOptions<AppSettings> appSettings, IDatabaseRepo databaseRepo)
+    public GetCorporateQueryValidator()
     {
-        _appSettings = appSettings.Value;
-        _databaseRepo = databaseRepo;
+        RuleFor(x => x.DatabaseSchemaType).NotEmpty();
     }
+}
 
-    public class GetCorporateQueryValidator : AbstractValidator<GetCorporateQuery>
-    {
-        public GetCorporateQueryValidator()
-        {
-            RuleFor(x => x.DatabaseSchemaType).NotEmpty();
-        }
-    }
+public sealed class GetCorporateQueryHandler(IOptions<AppSettings> appSettings, IDatabaseRepo databaseRepo) 
+    : IRequestHandler<GetCorporateQuery, ErrorOr<string?>>
+{
+    private readonly AppSettings _appSettings = appSettings.Value;
+    private readonly IDatabaseRepo _databaseRepo = databaseRepo;
 
     public async Task<ErrorOr<string?>> Handle(GetCorporateQuery queryRequest, CancellationToken cancellationToken)
     {

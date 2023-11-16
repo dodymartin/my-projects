@@ -7,9 +7,9 @@ public class Database : AggregateRoot<DatabaseId, string> //EntityBase<Database,
     public EnvironmentTypes EnvironmentType { get; set; }
     public DatabaseTypes Type { get; set; }
     public DatabaseSchemaTypes SchemaType { get; set; }
-    public string Name { get; set; }
-    public DatabaseId ParentId { get; set; }
+    public required string Name { get; set; }
+    public DatabaseId? ParentId { get; set; }
 
-    private readonly List<FacilityId> _facilityIds = new();
+    private readonly List<FacilityId> _facilityIds = [];
     public IReadOnlyList<FacilityId> FacilityIds => _facilityIds.AsReadOnly();
 }

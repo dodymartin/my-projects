@@ -4,14 +4,14 @@ using MediatR;
 
 namespace MinimalApi.Api.Features.Applications;
 
-public record CheckMinimumVersionQuery(
+public sealed record CheckMinimumVersionQuery(
     int? ApplicationId,
     string? ApplicationName,
     string ApplicationVersion,
     int? FacilityId)
     : IRequest<ErrorOr<bool>>;
 
-public class CheckMinimumVersionQueryValidator : AbstractValidator<CheckMinimumVersionQuery>
+public sealed class CheckMinimumVersionQueryValidator : AbstractValidator<CheckMinimumVersionQuery>
 {
     public CheckMinimumVersionQueryValidator()
     {
@@ -23,14 +23,10 @@ public class CheckMinimumVersionQueryValidator : AbstractValidator<CheckMinimumV
     }
 }
 
-public class CheckMinimumVersionQueryHandler : IRequestHandler<CheckMinimumVersionQuery, ErrorOr<bool>>
+public sealed class CheckMinimumVersionQueryHandler(IApplicationRepo applicationRepo)
+    : IRequestHandler<CheckMinimumVersionQuery, ErrorOr<bool>>
 {
-    private readonly IApplicationRepo _applicationRepo;
-
-    public CheckMinimumVersionQueryHandler(IApplicationRepo applicationRepo)
-    {
-        _applicationRepo = applicationRepo;
-    }
+    private readonly IApplicationRepo _applicationRepo = applicationRepo;
 
     public async Task<ErrorOr<bool>> Handle(CheckMinimumVersionQuery queryRequest, CancellationToken cancellationToken)
     {

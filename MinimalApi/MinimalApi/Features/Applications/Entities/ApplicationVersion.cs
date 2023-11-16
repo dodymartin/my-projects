@@ -2,8 +2,8 @@
 
 namespace MinimalApi.Api.Features.Applications;
 
-public class ApplicationVersion : Entity<ApplicationVersionId> //EntityBase<ApplicationVersion, ApplicationVersionId>
+public sealed class ApplicationVersion : Entity<ApplicationVersionId> //EntityBase<ApplicationVersion, ApplicationVersionId>
 {
-    public string FromDirectoryName { get; set; }
-    public string Version { get; set; }
+    public required string FromDirectoryName { get; set; }
+    public required string Version { get; set; }
 }

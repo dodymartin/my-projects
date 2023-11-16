@@ -1,4 +1,6 @@
-﻿using MinimalApi.Api.Features.WebApis;
+﻿using FluentAssertions.Execution;
+using FluentAssertions;
+using MinimalApi.Api.Features.WebApis;
 using NSubstitute;
 
 namespace MinimalApi.Api.Tests.UnitTests.WebApis.Features.GetBaseUri;
@@ -39,11 +41,11 @@ public class GetBaseUriQueryHandlerTests
         var result = await _handler.Handle(queryRequest, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.False(result.IsError);
-            Assert.True(result.Value == dto.GetBaseUri());
-        });
+            result.IsError.Should().BeFalse();
+            result.Value.Should().BeEquivalentTo(dto.GetBaseUri());
+        };
     }
 
     [Fact]
@@ -62,11 +64,11 @@ public class GetBaseUriQueryHandlerTests
         var result = await _handler.Handle(queryRequest, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.True(result.IsError);
-            Assert.NotEmpty(result.Errors);
-            Assert.Single(result.Errors);
-        });
+            result.IsError.Should().BeTrue();
+            result.Errors.Should().NotBeNullOrEmpty();
+            result.Errors.Should().ContainSingle();
+        };
     }
 }

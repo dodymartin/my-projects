@@ -3,14 +3,10 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public class WebApiRepo : IWebApiRepo
+public sealed class WebApiRepo(IWebApiDbContext dbContext)
+    : IWebApiRepo
 {
-    private readonly IWebApiDbContext _dbContext;
-
-    public WebApiRepo(IWebApiDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    private readonly IWebApiDbContext _dbContext = dbContext;
 
     public async Task<Application?> GetApplicationAsync(int applicationId, CancellationToken cancellationToken)
     {
@@ -76,7 +72,7 @@ public class WebApiRepo : IWebApiRepo
             .FromSqlRaw(sql)
             .ToListAsync(cancellationToken);
 
-        if (!endpoints.Any())
+        if (endpoints.Count == 0)
         {
             // This query will return the endpoints for a web api the same version
             // as the application; and therefore, no need for records
@@ -215,7 +211,7 @@ public class WebApiRepo : IWebApiRepo
             .FromSqlRaw(sql)
             .ToListAsync(cancellationToken);
 
-        if (!endpoints.Any())
+        if (endpoints.Count == 0)
         {
             // This query will return the endpoints for a web api the same version
             // as the application by facility; and therefore, no need for records

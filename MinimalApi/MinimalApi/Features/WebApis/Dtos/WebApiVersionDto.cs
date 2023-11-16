@@ -1,6 +1,6 @@
 ﻿namespace MinimalApi.Api.Features.WebApis;
 
-public class WebApiVersionDto
+public sealed class WebApiVersionDto
 {
     public required int ApplicationId { get; init; }
     public required int Port { get; set; }
