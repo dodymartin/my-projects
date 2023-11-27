@@ -7,7 +7,7 @@ services:
       - --api.insecure=true
       - --providers.docker=true
     ports:
-      - "80:80"
+      - "50199:80"
       - "8080:8080" #(enabled by --api.insecure=true)
     environment:
       - HTTP_PROXY=http://web.prod.proxy.cargill.com/

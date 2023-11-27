@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcService1";
+
+package test;
+
+// The greeting service definition.
+service Tester {
+  // Sends a greeting
+  rpc SayTestHello (TestHelloRequest) returns (TestHelloReply);
+}
+
+// The request message containing the user's name.
+message TestHelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings.
+message TestHelloReply {
+  string message = 1;
+}

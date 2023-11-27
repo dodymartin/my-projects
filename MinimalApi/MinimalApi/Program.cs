@@ -8,6 +8,7 @@ using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MinimalApi.Api;
 using MinimalApi.Api.Common;
 using MinimalApi.Api.Core;
 using MinimalApi.Api.Features.ApiCallUsages;
@@ -16,9 +17,9 @@ using MinimalApi.Api.Features.Databases;
 using MinimalApi.Api.Features.WebApis;
 using NLog.Extensions.Logging;
 
-_ = bool.TryParse(Environment.GetEnvironmentVariable("DOCKER_RUNNING"), out var dockerRunning);
+_ = bool.TryParse(Environment.GetEnvironmentVariable("DOCKER_RUNNING"), out var isDockerRunning);
 
-if (Environment.UserInteractive && !dockerRunning)
+if (Environment.UserInteractive && !isDockerRunning)
 {
     Console.WriteLine("Application is paused. If needed, attach");
     Console.WriteLine("remote debugger now.");
@@ -30,7 +31,7 @@ try
 {
     #region Get General/NLog Configuration
 
-    if (!dockerRunning)
+    if (!isDockerRunning)
         Environment.CurrentDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName)!;
 
     Console.WriteLine($"Current Directory        : {Environment.CurrentDirectory}");
@@ -112,7 +113,7 @@ try
 
     //// Comes from Stratos.Core
     //builder.Services.TryAddSingleton(ClientSideUsersLoader.Load(configPath, sitePath));
-    if (dockerRunning)
+    if (isDockerRunning)
         builder.Services.TryAddSingleton(DatabasesLoader.Load(configPath, configBySitePath));
     else
         builder.Services.TryAddSingleton(DatabasesLoader.Load(configPath));
@@ -140,6 +141,9 @@ try
 
     builder.Services.AddCarter();
     builder.Services.AddMapster();
+
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddProblemDetails();
 
     #region Add Mediator
 
@@ -169,36 +173,16 @@ try
     builder.Services.Scan(scan => scan
         .FromCallingAssembly()
         .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repo")))
-        .AsMatchingInterface()
+        .AsImplementedInterfaces()
         .WithScopedLifetime());
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
+    builder.Services.AddGrpc();
+    builder.Services.AddGrpcReflection();
+
     var app = builder.Build();
-
-    #region Add Global Exception handler
-
-    // Change to use minimal api pattern at 22:15 in
-    // https://www.youtube.com/watch?v=gMwAhKddHYQ&list=PLzYkqgWkHPKBcDIP5gzLfASkQyTdy0t4k&index=4
-    // for global unhandled exceptions
-    _ = app.Use(async (ctx, next) =>
-    {
-        try
-        {
-            if (dockerRunning)
-                ctx.Response.Headers.Append("Container-Id", Environment.MachineName);
-            await next();
-        }
-        catch (Exception ex)
-        {
-            app.Logger.LogError("{error}", ex.ToString());
-            ctx.Response.StatusCode = 500;
-            await ctx.Response.WriteAsync("An error has occured, check api log file for details.");
-        }
-    });
-
-    #endregion
 
     #region Enable request buffering
 
@@ -217,10 +201,36 @@ try
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.MapGrpcReflectionService();
     }
 
     app.UseHttpsRedirection();
     app.UseRouting();
+
+    #region Just for demo, add docker Container-Id to response header
+
+    _ = app.Use(async (ctx, next) =>
+    {
+        if (isDockerRunning)
+            ctx.Response.Headers.Append("Container-Id", Environment.MachineName);
+        await next();
+    });
+
+    #endregion
+
+    #region Add Global Exception handler
+
+    /// New IExceptionHandler in NET8
+    /// https://www.youtube.com/shorts/jncrUGb03Ac
+    /// for global unhandled exceptions
+    app.UseExceptionHandler();
+
+    /// Change to use minimal api pattern at 22:15 in
+    /// https://www.youtube.com/watch?v=gMwAhKddHYQ&list=PLzYkqgWkHPKBcDIP5gzLfASkQyTdy0t4k&index=4
+    /// for global unhandled exceptions, I just refactored into a class
+    //app.UseMiddleware<GlobalExceptionMiddleware>();
+
+    #endregion
 
     //app.UseAuthentication();
     //app.UseAuthorization();
@@ -234,21 +244,23 @@ try
     // Add detailed urls to base group
     group.MapCarter();
 
+    // Add detailed grpc urls
+    app.MapGrpcService<GreeterService>();
+
     #endregion
 
     app.Run();
 }
 catch (Exception ex)
 {
-    if (dockerRunning)
+    if (isDockerRunning)
         throw;
     Console.WriteLine(ex.ToString());
     NLog.LogManager.GetCurrentClassLogger().Log(NLog.LogLevel.Error, ex.ToString());
     Environment.ExitCode = 10001;
-
 }
 
 NLog.LogManager.GetCurrentClassLogger().Log(NLog.LogLevel.Info, "Stopping");
 
-if (Environment.UserInteractive && !dockerRunning)
+if (Environment.UserInteractive && !isDockerRunning)
     Console.ReadKey();
