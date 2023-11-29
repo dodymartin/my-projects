@@ -7,6 +7,14 @@ public class GreeterService(ILogger<GreeterService> logger) : Greeter.GreeterBas
     private readonly ILogger<GreeterService> _logger = logger;
     private readonly Guid _id = Guid.NewGuid();
 
+    public override Task<PingReply> Ping(Empty request, ServerCallContext context)
+    {
+        return Task.FromResult(new PingReply
+        {
+            Success = true
+        });
+    }
+
     public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
     {
         return Task.FromResult(new HelloReply

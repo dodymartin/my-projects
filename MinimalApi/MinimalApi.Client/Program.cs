@@ -36,14 +36,12 @@ await Host.CreateDefaultBuilder()
 
         #region Add HttpClients to HttpClientFactory
 
-        // Add policies to use on calls
         var restBaseAddresses = config.GetSection($"{MinimalApi.Client.AppSettings.ConfigurationSection}:RestBaseAddresses")
             .Get<Dictionary<int, RestBaseAddress>>();
         if (restBaseAddresses is not null)
         {
             foreach (var restBaseAddress in restBaseAddresses)
             {
-                // Adds to IHttpClientFactory
                 services.AddHttpClient(restBaseAddress.Value.Address, opt =>
                 {
                     opt.BaseAddress = new Uri(restBaseAddress.Value.Address);
@@ -56,12 +54,29 @@ await Host.CreateDefaultBuilder()
         services.AddSingleton<IMinimalRestClient, MinimalRestClient>();
         services.AddSingleton<RestService>();
 
-        // Adds to IHttpClientFactory
-        services.AddGrpcClient<Greeter.GreeterClient>(o =>
+        #region Add GrpcClients to GrpcClientFactory
+
+        var grpcBaseAddresses = config.GetSection($"{MinimalApi.Client.AppSettings.ConfigurationSection}:GrpcBaseAddresses")
+            .Get<Dictionary<int, RestBaseAddress>>();
+        if (grpcBaseAddresses is not null)
         {
-            var addr = config.GetValue<string>("MinimalApi.Client.AppSettings:GrpcBaseAddress")!;
-            o.Address = new Uri(addr);
-        });
+            foreach (var grpcBaseAddress in grpcBaseAddresses)
+            {
+                services.AddGrpcClient<Greeter.GreeterClient>(grpcBaseAddress.Value.Address, opt =>
+                {
+                    opt.Address = new Uri(grpcBaseAddress.Value.Address);
+                });
+            }
+        }
+
+        #endregion
+
+        //// Adds to GrpcClientFactory
+        //services.AddGrpcClient<Greeter.GreeterClient>(o =>
+        //{
+        //    var addr = config.GetValue<string>("MinimalApi.Client.AppSettings:GrpcBaseAddress")!;
+        //    o.Address = new Uri(addr);
+        //});
         services.AddSingleton<GrpcService>();
 
         services.AddHostedService<WorkerService>();

@@ -1,14 +1,43 @@
+using System.Net.Http;
 using Grpc.Core;
+using Grpc.Net.ClientFactory;
+using Microsoft.Extensions.Options;
 using MinimalApi.Api.Features.Applications;
 
 namespace MinimalApi.Client;
 
-public class GrpcService(Greeter.GreeterClient client)
+public class GrpcService(IOptions<AppSettings> appSettings, GrpcClientFactory grpcClientFactory)
 {
-    private readonly Greeter.GreeterClient _client = client;
+    private readonly AppSettings _appSettings = appSettings.Value;
+    private readonly GrpcClientFactory _grpcClientFactory = grpcClientFactory;
 
     public async Task HandleAsync()
     {
+        #region Find active service
+
+        var client = default(Greeter.GreeterClient);
+        foreach (var grpcBaseAddress in _appSettings.GrpcBaseAddresses)
+        {
+            try
+            {
+                var pingClient = _grpcClientFactory.CreateClient<Greeter.GreeterClient>(grpcBaseAddress.Value.Address);
+                var pingResponse = await pingClient.PingAsync(new Empty());
+                if (pingResponse.Success)
+                {
+                    client = pingClient;
+                    break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed {grpcBaseAddress.Value.Address}\n\t({ex.Message})");
+            }
+        }
+        if (client is null)
+            throw new Exception("Service unavailable");
+
+        #endregion
+
         Console.WriteLine();
         Console.Write("Who are you ? ");
         var name = Console.ReadLine();
@@ -16,7 +45,7 @@ public class GrpcService(Greeter.GreeterClient client)
         Console.WriteLine("SayHello to service");
 
         var request = new HelloRequest { Name = name };
-        var response = _client.SayHello(request);
+        var response = client.SayHello(request);
 
         var foregroundColor = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.Green;
@@ -31,7 +60,7 @@ public class GrpcService(Greeter.GreeterClient client)
             Console.WriteLine("StreamReply from Service");
 
             var cts = new CancellationTokenSource();
-            using var streamHelloResponse = _client.StreamHello(new HelloRequest { Name = name });
+            using var streamHelloResponse = client.StreamHello(new HelloRequest { Name = name });
 
             foregroundColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Green;
