@@ -19,13 +19,13 @@ using NLog.Extensions.Logging;
 
 _ = bool.TryParse(Environment.GetEnvironmentVariable("DOCKER_RUNNING"), out var isDockerRunning);
 
-if (Environment.UserInteractive && !isDockerRunning)
-{
-    Console.WriteLine("Application is paused. If needed, attach");
-    Console.WriteLine("remote debugger now.");
-    Console.WriteLine("\nPress any key to continue!");
-    Console.ReadKey();
-}
+//if (Environment.UserInteractive && !isDockerRunning)
+//{
+//    Console.WriteLine("Application is paused. If needed, attach");
+//    Console.WriteLine("remote debugger now.");
+//    Console.WriteLine("\nPress any key to continue!");
+//    Console.ReadKey();
+//}
 
 try
 {

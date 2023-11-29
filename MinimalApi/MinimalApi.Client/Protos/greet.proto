@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option csharp_namespace = " MinimalApi.Api.Features.Applications";
 
-package greet;
+package greet.v6;
 
 // The greeting service definition.
 service Greeter {

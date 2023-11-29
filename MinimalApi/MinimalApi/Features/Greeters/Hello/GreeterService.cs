@@ -5,12 +5,13 @@ namespace MinimalApi.Api.Features.Applications;
 public class GreeterService(ILogger<GreeterService> logger) : Greeter.GreeterBase
 {
     private readonly ILogger<GreeterService> _logger = logger;
+    private readonly Guid _id = Guid.NewGuid();
 
     public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
     {
         return Task.FromResult(new HelloReply
         {
-            Message = "Hello " + request.Name
+            Message = $"Hello {request.Name}, {_id}"
         });
     }
 
@@ -20,7 +21,7 @@ public class GreeterService(ILogger<GreeterService> logger) : Greeter.GreeterBas
         {
             await Task.Delay(50);
 
-            var reply = new HelloReply { Message = $"Hello {request.Name} {i}" };
+            var reply = new HelloReply { Message = $"Hello {request.Name} {i}, {_id}" };
             await responseStream.WriteAsync(reply);
             if (context.CancellationToken.IsCancellationRequested)
                 break;
