@@ -1,12 +1,12 @@
 using Polly;
-using Polly.Wrap;
+using Polly.Retry;
+using Polly.Timeout;
 using RestSharp;
-
 namespace MinimalApi.Client;
 
 public interface IPolicyHolder
 {
-    IAsyncPolicy<RestResponse> GetRetrySwitchPolicy(Action<IHttpClientFactory, string> setRestClient);
-    IAsyncPolicy<RestResponse> GetTimeoutPolicy(int timeout = 5);
-    AsyncPolicyWrap<RestResponse> GetTimeoutAndRetrySwitchWrap(Action<IHttpClientFactory, string> setRestClient, int timeout = 5);
+    RetryStrategyOptions<RestResponse> GetRetryStrategy(Action<IHttpClientFactory, string> setRestClient, int maxRetryAttempts = 3);
+    ResiliencePipeline<RestResponse> GetTimeoutAndRetrySwitchResiliencePipeline(Action<IHttpClientFactory, string> setRestClient, int maxRetryAttempts = 3, int timeout = 5);
+    TimeoutStrategyOptions GetTimeoutStrategy(int timeout = 5);
 }

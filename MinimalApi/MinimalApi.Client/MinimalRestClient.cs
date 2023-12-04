@@ -1,5 +1,6 @@
+using System.Threading;
 using Microsoft.Extensions.Options;
-using Polly.Wrap;
+using Polly;
 using RestSharp;
 
 namespace MinimalApi.Client;
@@ -7,15 +8,24 @@ namespace MinimalApi.Client;
 public class MinimalRestClient : IMinimalRestClient
 {
     private readonly AppSettings _appSettings;
-    private readonly AsyncPolicyWrap<RestResponse> _policyWrap;
+    private readonly ResiliencePipeline<RestResponse> _resiliencePipeline;
 
     private RestClient? _restClient;
 
-    public MinimalRestClient(IOptions<AppSettings> appSettings, IHttpClientFactory httpClientFactory, IPolicyHolder policyHolder)
+    public MinimalRestClient(IOptions<AppSettings> appSettings, IHttpClientFactory httpClientFactory, /* Version 1*/ IPolicyHolder policyHolder, /* Version 2 */ RetrySwitchStrategyOptions retrySwitchStrategyOptions)
     {
         _appSettings = appSettings.Value;
 
-        _policyWrap = policyHolder.GetTimeoutAndRetrySwitchWrap(SetRestClient);
+        // Version 1
+        _resiliencePipeline = policyHolder.GetTimeoutAndRetrySwitchResiliencePipeline(SetRestClient);
+
+        // Version 2
+        //retrySwitchStrategyOptions.SetRestClientAction = SetRestClient;
+        //_resiliencePipeline = new ResiliencePipelineBuilder<RestResponse>()
+        //    .AddRetry(retrySwitchStrategyOptions)
+        //    .AddTimeout(policyHolder.GetTimeoutStrategy(5))
+        //    .Build();
+
         SetRestClient(httpClientFactory, _appSettings.RestBaseAddresses[0].Address);
     }
 
@@ -24,9 +34,12 @@ public class MinimalRestClient : IMinimalRestClient
         var url = "base-uri";
         var request = new RestRequest(url).AddJsonBody(body);
 
-        var response = await _policyWrap.ExecuteAsync(
-            token => _restClient!.ExecutePostAsync(request, token), cancellationToken)
-            .ConfigureAwait(false);
+        var response = await _resiliencePipeline.ExecuteAsync(
+            async token =>
+            {
+                return await _restClient!.ExecutePostAsync(request, token).ConfigureAwait(false);
+            },
+            cancellationToken).ConfigureAwait(false);
 
         return response?.Content;
     }

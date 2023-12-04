@@ -4,10 +4,9 @@ using MediatR;
 
 namespace MinimalApi.Api.Common;
 
-public class ValidationBehavior<TRequest, TResponse> :
-    IPipelineBehavior<TRequest, TResponse>
-        where TRequest : IRequest<TResponse>
-        where TResponse : IErrorOr
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+    where TResponse : IErrorOr
 {
     private readonly IValidator<TRequest>? _validator;
 

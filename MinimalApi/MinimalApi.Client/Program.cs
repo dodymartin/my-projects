@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MinimalApi.Api.Features.Applications;
 using MinimalApi.Client;
 using RestSharp;
@@ -29,7 +30,20 @@ await Host.CreateDefaultBuilder()
     })
     .ConfigureServices((services) =>
     {
+        #region Polly
+
+        // Version 1
         services.AddSingleton<IPolicyHolder, PolicyHolder>();
+
+        // Version 2
+        services.AddTransient(sp =>
+        {
+            var appSettings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
+            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+            return new RetrySwitchStrategyOptions(appSettings.RestBaseAddresses, httpClientFactory);
+        });
+
+        #endregion
 
         services.AddOptions<MinimalApi.Client.AppSettings>()
             .BindConfiguration(MinimalApi.Client.AppSettings.ConfigurationSection);
@@ -71,12 +85,6 @@ await Host.CreateDefaultBuilder()
 
         #endregion
 
-        //// Adds to GrpcClientFactory
-        //services.AddGrpcClient<Greeter.GreeterClient>(o =>
-        //{
-        //    var addr = config.GetValue<string>("MinimalApi.Client.AppSettings:GrpcBaseAddress")!;
-        //    o.Address = new Uri(addr);
-        //});
         services.AddSingleton<GrpcService>();
 
         services.AddHostedService<WorkerService>();

@@ -1,41 +1,62 @@
 using Microsoft.Extensions.Options;
 using Polly;
-using Polly.Wrap;
+using Polly.Retry;
+using Polly.Timeout;
 using RestSharp;
 
 namespace MinimalApi.Client;
 
 public class PolicyHolder(IOptions<AppSettings> appSettings, IHttpClientFactory httpClientFactory) : IPolicyHolder
 {
+    private const int MAX_RETRY_ATTEMPTS = 3;
     private const int TIMEOUT = 5;
 
     private readonly AppSettings _appSettings = appSettings.Value;
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
-    public IAsyncPolicy<RestResponse> GetTimeoutPolicy(int timeout = TIMEOUT)
+    public TimeoutStrategyOptions GetTimeoutStrategy(int timeout = TIMEOUT)
     {
-        return Policy.TimeoutAsync<RestResponse>(timeout);
+        return new TimeoutStrategyOptions
+        {
+            Timeout = TimeSpan.FromSeconds(timeout),
+
+            OnTimeout = _ =>
+            {
+                Console.WriteLine("Timeout occurred!");
+                return default;
+            },
+        };
     }
 
-    public IAsyncPolicy<RestResponse> GetRetrySwitchPolicy(Action<IHttpClientFactory, string> setRestClient)
+    public RetryStrategyOptions<RestResponse> GetRetryStrategy(Action<IHttpClientFactory, string> setRestClient, int maxRetryAttempts = MAX_RETRY_ATTEMPTS)
     {
-        return
-            Policy
-                .HandleResult<RestResponse>(r => !r.IsSuccessStatusCode)
-                .RetryAsync(3, (response, retryCount) =>
-                {
-                    Console.WriteLine($"Retry {retryCount} ({response.Result.ErrorMessage})");
+        return new RetryStrategyOptions<RestResponse>
+        {
+            ShouldHandle = new PredicateBuilder<RestResponse>()
+                .HandleResult(r => !r.IsSuccessStatusCode),
 
-                    var httpClientKey = _appSettings.RestBaseAddresses[retryCount].Address;
+            OnRetry = args =>
+            {
+                Console.WriteLine($"Retry {args.AttemptNumber + 1} ({args.Outcome.Result?.ErrorMessage})");
+
+                if (setRestClient is not null && _appSettings.RestBaseAddresses.TryGetValue(args.AttemptNumber + 1, out var restBaseAddress))
+                {
+                    var httpClientKey = restBaseAddress.Address;
                     Console.WriteLine($"Switching to {httpClientKey}");
                     setRestClient(_httpClientFactory, httpClientKey);
-                });
+                }
+                return default;
+            },
+            Delay = TimeSpan.FromMilliseconds(1),
+            MaxRetryAttempts = maxRetryAttempts
+        };
     }
 
-    public AsyncPolicyWrap<RestResponse> GetTimeoutAndRetrySwitchWrap(Action<IHttpClientFactory, string> setRestClient, int timeout = TIMEOUT)
+    public ResiliencePipeline<RestResponse> GetTimeoutAndRetrySwitchResiliencePipeline(Action<IHttpClientFactory, string> setRestClient, int maxRetryAttempts = MAX_RETRY_ATTEMPTS, int timeout = TIMEOUT)
     {
-        _ = setRestClient ?? throw new ArgumentNullException(nameof(setRestClient));
-
-        return Policy.WrapAsync(GetRetrySwitchPolicy(setRestClient), GetTimeoutPolicy(timeout));
+        return new ResiliencePipelineBuilder<RestResponse>()
+            .AddRetry(GetRetryStrategy(setRestClient))
+            .AddTimeout(GetTimeoutStrategy(timeout))
+            .Build();
     }
 }
