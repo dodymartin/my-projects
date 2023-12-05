@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MinimalApi.Api.Common;
@@ -48,7 +48,9 @@ public sealed class WebApiDbContext(ILogger<WebApiDbContext> logger, IOptions<Ap
                     select type;
         foreach (var type in types)
         {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             dynamic configurationInstance = Activator.CreateInstance(type);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             modelBuilder.ApplyConfiguration(configurationInstance);
         }
     }

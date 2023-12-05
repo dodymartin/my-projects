@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
@@ -29,6 +29,7 @@ public sealed class CreateApiCallUsageCommandHandler(IMapper mapper, IBaseCrudRe
 {
     private readonly IMapper _mapper = mapper;
     private readonly IBaseCrudRepo<ApiCallUsage, Guid> _apiCallUsageRepo = apiCallUsageRepo;
+    private static readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
 
     public async Task<ErrorOr<ApiCallUsageDto>> Handle(CreateApiCallUsageCommand commandRequest, CancellationToken cancellationToken)
     {
@@ -75,7 +76,7 @@ public sealed class CreateApiCallUsageCommandHandler(IMapper mapper, IBaseCrudRe
             if (!string.IsNullOrEmpty(uglyBody))
             {
                 var jsonElement = JsonSerializer.Deserialize<JsonElement>(uglyBody);
-                var prettyBody = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions() { WriteIndented = true });
+                var prettyBody = JsonSerializer.Serialize(jsonElement, _jsonOptions);
 
                 apiCallUsageDto.Body = Encoding.ASCII.GetBytes(prettyBody);
             }
@@ -113,7 +114,7 @@ public sealed class CreateApiCallUsageCommandHandler(IMapper mapper, IBaseCrudRe
         {
             hasAuthorizationHeader = true;
             var authHeader = authToken.First();
-            var encodedUsernamePassword = authHeader["Basic ".Length..].Trim();
+            var encodedUsernamePassword = authHeader!["Basic ".Length..].Trim();
             if (authHeader.StartsWith("Basic"))
             {
                 var tokenParts =

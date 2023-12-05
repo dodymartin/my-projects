@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MinimalApi.Api.Common;
 
@@ -7,10 +7,11 @@ namespace MinimalApi.Api.Features.ApiCallUsages;
 public class BaseCrudRepo<TEntity, TKey>(IApiCallUsageDbContext context) : IBaseCrudRepo<TEntity, TKey>
     where TEntity : class
 {
-    protected readonly DbContext _dbContext = (DbContext)context;
+    private static readonly char[] _commaSeparator = [','];
+    protected readonly DbContext DbContext = (DbContext)context;
 
     private readonly DbSet<TEntity>? _dbSet;
-    protected DbSet<TEntity> DbSet => _dbSet ?? _dbContext.Set<TEntity>();
+    protected DbSet<TEntity> DbSet => _dbSet ?? DbContext.Set<TEntity>();
 
     #region IBaseRepo
 
@@ -25,7 +26,7 @@ public class BaseCrudRepo<TEntity, TKey>(IApiCallUsageDbContext context) : IBase
             query = query.Where(filter);
 
         foreach (var includeProperty in includeProperties.Split
-            (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            (_commaSeparator, StringSplitOptions.RemoveEmptyEntries))
         {
             query = query.Include(includeProperty);
         }
@@ -47,13 +48,13 @@ public class BaseCrudRepo<TEntity, TKey>(IApiCallUsageDbContext context) : IBase
 
     public virtual void Delete(TKey id)
     {
-        TEntity entityToDelete = DbSet.Find(id)!;
+        var entityToDelete = DbSet.Find(id)!;
         Delete(entityToDelete);
     }
 
     public void Delete(TEntity entityToDelete)
     {
-        if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
+        if (DbContext.Entry(entityToDelete).State == EntityState.Detached)
             DbSet.Attach(entityToDelete);
         DbSet.Remove(entityToDelete);
     }
@@ -61,36 +62,36 @@ public class BaseCrudRepo<TEntity, TKey>(IApiCallUsageDbContext context) : IBase
     public void Update(TEntity entityToUpdate)
     {
         DbSet.Attach(entityToUpdate);
-        _dbContext.Entry(entityToUpdate).State = EntityState.Modified;
+        DbContext.Entry(entityToUpdate).State = EntityState.Modified;
     }
 
     public bool ExecuteSQL(string query)
     {
-        return _dbContext.Database.ExecuteSqlRaw(query) > 0;
+        return DbContext.Database.ExecuteSqlRaw(query) > 0;
     }
 
     public int Save()
     {
-        return _dbContext.SaveChanges();
+        return DbContext.SaveChanges();
     }
 
     public async Task<int> SaveAsync()
     {
-        return await _dbContext.SaveChangesAsync();
+        return await DbContext.SaveChangesAsync();
     }
 
     #endregion
 
     #region IDisposable
 
-    private bool disposed = false;
+    private bool _disposed = false;
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposed)
+        if (!_disposed)
             if (disposing)
-                _dbContext.Dispose();
-        disposed = true;
+                DbContext.Dispose();
+        _disposed = true;
     }
 
     public void Dispose()

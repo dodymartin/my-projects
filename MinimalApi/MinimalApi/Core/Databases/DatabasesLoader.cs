@@ -29,8 +29,8 @@ public class DatabasesLoader : KeyedCollection<string, DatabaseInfo>, IDatabases
     }
 
     public static IDatabases Load(string configPath)
-        => CoreMethods.FindAndLoad<DatabasesLoader>(configPath, "databases.config.json");
+        => CoreMethods.FindAndLoad<DatabasesLoader>(configPath, "databases.config.json")!;
 
     public static IDatabases Load(string configPath, string sitePath)
-        => CoreMethods.FindAndLoad<DatabasesLoader>(configPath, sitePath, "databases.config.json");
+        => CoreMethods.FindAndLoad<DatabasesLoader>(configPath, sitePath, "databases.config.json")!;
 }

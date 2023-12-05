@@ -1,29 +1,20 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.Applications;
 
-public class ApplicationDbContext : DbContext, IApplicationDbContext
+public class ApplicationDbContext(ILogger<ApplicationDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApplicationDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor) : DbContext(options), IApplicationDbContext
 {
-    private readonly ILogger<ApplicationDbContext> _logger;
-    private readonly AppSettings _appSettings;
-    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor;
+    private readonly ILogger<ApplicationDbContext> _logger = logger;
+    private readonly AppSettings _appSettings = appSettings.Value;
+    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
 
-    public IDbContextSettings Settings { get; }
+    public IDbContextSettings Settings { get; } = settings;
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade IApplicationDbContext.Database => Database;
 
     public DbSet<Application> Applications { get; private set; } = null!;
-
-    public ApplicationDbContext(ILogger<ApplicationDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApplicationDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor)
-        : base(options)
-    {
-        _logger = logger;
-        _appSettings = appSettings.Value;
-        Settings = settings;
-        _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
-    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -52,7 +43,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                     select type;
         foreach (var type in types)
         {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             dynamic configurationInstance = Activator.CreateInstance(type);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             modelBuilder.ApplyConfiguration(configurationInstance);
         }
     }
