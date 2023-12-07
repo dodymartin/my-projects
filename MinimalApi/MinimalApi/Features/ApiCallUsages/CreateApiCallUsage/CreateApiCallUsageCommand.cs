@@ -35,7 +35,7 @@ public sealed class CreateApiCallUsageCommandHandler(IMapper mapper, IBaseCrudRe
     {
         var apiCallUsageDto = GetDto(commandRequest.Context, commandRequest.FilterFactoryContext, commandRequest.ElapsedMilliseconds);
         _apiCallUsageRepo.Insert(_mapper.Map<ApiCallUsage>(apiCallUsageDto));
-        await _apiCallUsageRepo.SaveAsync();
+        await _apiCallUsageRepo.SaveAsync().ConfigureAwait(false);
         return apiCallUsageDto;
     }
 

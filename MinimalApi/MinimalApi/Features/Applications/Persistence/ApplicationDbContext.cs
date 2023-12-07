@@ -5,11 +5,11 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.Applications;
 
-public class ApplicationDbContext(ILogger<ApplicationDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApplicationDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor) : DbContext(options), IApplicationDbContext
+public class ApplicationDbContext(ILogger<ApplicationDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApplicationDbContext> options, IDbContextSettings settings, SaveChangesInterceptor publishDomainEventsInterceptor) : DbContext(options), IApplicationDbContext
 {
     private readonly ILogger<ApplicationDbContext> _logger = logger;
     private readonly AppSettings _appSettings = appSettings.Value;
-    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
+    private readonly SaveChangesInterceptor _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
 
     public IDbContextSettings Settings { get; } = settings;
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade IApplicationDbContext.Database => Database;

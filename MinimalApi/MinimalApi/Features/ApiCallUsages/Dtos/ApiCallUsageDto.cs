@@ -6,7 +6,7 @@ public class ApiCallUsageDto
 {
     public string? BasicUsername { get; set; }
     public byte[]? Body { get; set; }
-    public string? CreateOrigin { get; set; }
+    public string? CreatedOrigin { get; set; }
     [NotMapped]
     public long ElapsedMilliseconds { get; set; }
     public bool HasAuthorizationHeader { get; set; }

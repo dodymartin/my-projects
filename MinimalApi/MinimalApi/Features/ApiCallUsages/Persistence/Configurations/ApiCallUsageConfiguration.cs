@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MinimalApi.Api.Features.ApiCallUsages;
@@ -13,7 +13,9 @@ internal class ApiCallUsageConfiguration : IEntityTypeConfiguration<ApiCallUsage
         builder.Property(p => p.Id).HasColumnName("SVC_CALL_USG_GUID");
         builder.Property(p => p.BasicUsername).HasColumnName("BSIC_USR_NM");
         builder.Property(p => p.Body).HasColumnName("RQST_BLOB").HasColumnType("BLOB");
-        builder.Property(p => p.CreateOrigin).HasColumnName("CRT_ORGN");
+        builder.Property(p => p.CreatedBy).HasColumnName("CRT_USR_ID");
+        builder.Property(p => p.CreatedOn).HasColumnName("CRT_TS");
+        builder.Property(p => p.CreatedOrigin).HasColumnName("CRT_ORGN");
         //builder.Property(p => p.ElapsedMilliSeconds).HasColumnName("ELPSD_MILLI_SECS");
         builder.Property(p => p.HasAuthorizationHeader).HasColumnName("HAS_AUTH_HDR");
         builder.Property(p => p.ApiApplicationExeName).HasColumnName("SVC_NM");

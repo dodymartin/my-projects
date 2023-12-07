@@ -7,7 +7,6 @@ using FluentValidation;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using MinimalApi.Api;
 using MinimalApi.Api.Common;
 using MinimalApi.Api.Core;
@@ -114,9 +113,9 @@ try
     //// Comes from Stratos.Core
     //builder.Services.TryAddSingleton(ClientSideUsersLoader.Load(configPath, sitePath));
     if (isDockerRunning)
-        builder.Services.TryAddSingleton(DatabasesLoader.Load(configPath, configBySitePath));
+        builder.Services.AddSingleton(DatabasesLoader.Load(configPath, configBySitePath));
     else
-        builder.Services.TryAddSingleton(DatabasesLoader.Load(configPath));
+        builder.Services.AddSingleton(DatabasesLoader.Load(configPath));
     //builder.Services.TryAddSingleton(SiteConfigurationLoader.Load(configPath, sitePath));
 
     //// Register IApplicationContext to force feeding ApplicationId
@@ -156,18 +155,18 @@ try
 
     #region Add Database Services
 
-    builder.Services.TryAddScoped<IDbContextSettings, DbContextSettings>();
+    builder.Services.AddScoped<IDbContextSettings, DbContextSettings>();
 
     builder.Services.AddDbContext<IApiCallUsageDbContext, ApiCallUsageDbContext>();
     builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
     builder.Services.AddDbContext<IDatabaseDbContext, DatabaseDbContext>();
     builder.Services.AddDbContext<IWebApiDbContext, WebApiDbContext>();
 
-    builder.Services.TryAddScoped<IBaseCrudRepo<ApiCallUsage, Guid>, BaseCrudRepo<ApiCallUsage, Guid>>();
+    builder.Services.AddScoped<IBaseCrudRepo<ApiCallUsage, Guid>, ApiCallUsageRepo<ApiCallUsage, Guid>>();
 
     #endregion
 
-    builder.Services.TryAddScoped<PublishDomainEventsInterceptor>();
+    builder.Services.AddScoped<SaveChangesInterceptor>();
 
     // Using Scrutor ... Register all *Repo classes to DI
     builder.Services.Scan(scan => scan

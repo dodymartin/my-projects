@@ -1,14 +1,17 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using MinimalApi.Api.Common.Interfaces;
 
 namespace MinimalApi.Api.Features.ApiCallUsages;
 
-public class ApiCallUsage
+public class ApiCallUsage : IAuditableEntity
 {
     public Guid Id { get; set; }
 
     public string? BasicUsername { get; set; }
     public byte[]? Body { get; set; }
-    public string? CreateOrigin { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTime? CreatedOn { get; set; }
+    public string? CreatedOrigin { get; set; }
     [NotMapped]
     public long ElapsedMilliseconds { get; set; }
     public bool HasAuthorizationHeader { get; set; }

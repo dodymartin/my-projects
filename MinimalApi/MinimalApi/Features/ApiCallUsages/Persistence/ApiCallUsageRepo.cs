@@ -4,14 +4,14 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.ApiCallUsages;
 
-public class BaseCrudRepo<TEntity, TKey>(IApiCallUsageDbContext context) : IBaseCrudRepo<TEntity, TKey>
+public class ApiCallUsageRepo<TEntity, TKey>(IApiCallUsageDbContext context) : IBaseCrudRepo<TEntity, TKey>
     where TEntity : class
 {
     private static readonly char[] _commaSeparator = [','];
     protected readonly DbContext DbContext = (DbContext)context;
 
-    private readonly DbSet<TEntity>? _dbSet;
-    protected DbSet<TEntity> DbSet => _dbSet ?? DbContext.Set<TEntity>();
+    private DbSet<TEntity>? _dbSet;
+    protected DbSet<TEntity> DbSet => _dbSet ??= DbContext.Set<TEntity>();
 
     #region IBaseRepo
 

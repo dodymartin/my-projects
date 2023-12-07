@@ -5,12 +5,12 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.ApiCallUsages;
 
-public class ApiCallUsageDbContext(ILogger<ApiCallUsageDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApiCallUsageDbContext> options, IDbContextSettings settings, PublishDomainEventsInterceptor publishDomainEventsInterceptor) 
+public class ApiCallUsageDbContext(ILogger<ApiCallUsageDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApiCallUsageDbContext> options, IDbContextSettings settings, SaveChangesInterceptor saveChangesInterceptor)
     : DbContext(options), IApiCallUsageDbContext
 {
     private readonly ILogger<ApiCallUsageDbContext> _logger = logger;
     private readonly AppSettings _appSettings = appSettings.Value;
-    private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
+    private readonly SaveChangesInterceptor _saveChangesInterceptor = saveChangesInterceptor;
 
     public IDbContextSettings Settings { get; } = settings;
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade IApiCallUsageDbContext.Database => Database;
@@ -26,8 +26,7 @@ public class ApiCallUsageDbContext(ILogger<ApiCallUsageDbContext> logger, IOptio
         //optionsBuilder.UseOracle(Settings.Database.ConnectString);
         if (_appSettings.ShowSql)
             optionsBuilder.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
-        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        optionsBuilder.AddInterceptors(_publishDomainEventsInterceptor);
+        optionsBuilder.AddInterceptors(_saveChangesInterceptor);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,11 +35,12 @@ public class ApiCallUsageDbContext(ILogger<ApiCallUsageDbContext> logger, IOptio
         modelBuilder
             .Ignore<List<IDomainEvent>>();
 
-        var types = from type in Assembly.GetExecutingAssembly().GetTypes()
+        var types =
+            from type in Assembly.GetExecutingAssembly().GetTypes()
             where type.Namespace == GetType().Namespace
                 && !type.IsAbstract
                 && !type.IsInterface
-                && type.GetInterfaces().Any(i=>i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))
+                && type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))
             select type;
         foreach (var type in types)
         {
