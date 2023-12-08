@@ -1,6 +1,7 @@
 using System.Reflection;
 using FluentAssertions;
 using MediatR;
+using Microsoft.AspNetCore.Diagnostics;
 using MinimalApi.Api.Features.ApiCallUsages;
 using NetArchTest.Rules;
 
@@ -34,8 +35,8 @@ public class HandlerTests
             .HaveNameEndingWith("Handler")
             .Should()
             .ImplementInterface(typeof(IRequestHandler<,>))
-            //.Or()
-            //.ImplementInterface(typeof(IExceptionHandler))
+            .Or()
+            .ImplementInterface(typeof(IExceptionHandler))
             .GetResult();
 
         // Assert
