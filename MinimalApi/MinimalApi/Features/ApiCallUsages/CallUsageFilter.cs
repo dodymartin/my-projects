@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using MediatR;
 using Microsoft.Extensions.Options;
 using MinimalApi.Api.Common;
@@ -27,7 +27,7 @@ public class CallUsageFilter(ILogger<CallUsageFilter> logger, IOptions<AppSettin
         if (apiCallUsageResponse.IsError)
         {
             apiCallUsageResponse.Errors.ForEach(x => _logger.LogWarning("{warning}", x.Description));
-            return result!;
+            return result;
         }
 
         var apiCallUsageDto = apiCallUsageResponse.Value;
@@ -47,6 +47,6 @@ public class CallUsageFilter(ILogger<CallUsageFilter> logger, IOptions<AppSettin
             apiCallUsageDto.BasicUsername,
             apiCallUsageDto.HasAuthorizationHeader,
             apiCallUsageDto.ElapsedMilliseconds);
-        return result!;
+        return result;
     }
 }

@@ -5,12 +5,12 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.WebApis;
 
-public sealed class WebApiDbContext(ILogger<WebApiDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<WebApiDbContext> options, IDbContextSettings settings, SaveChangesInterceptor publishDomainEventsInterceptor) 
+public sealed class WebApiDbContext(ILogger<WebApiDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<WebApiDbContext> options, IDbContextSettings settings, SaveChangesInterceptor saveChangesInterceptor) 
     : DbContext(options), IWebApiDbContext
 {
     private readonly ILogger<WebApiDbContext> _logger = logger;
     private readonly AppSettings _appSettings = appSettings.Value;
-    private readonly SaveChangesInterceptor _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
+    private readonly SaveChangesInterceptor _saveChangesInterceptor = saveChangesInterceptor;
 
     public IDbContextSettings Settings { get; } = settings;
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade IWebApiDbContext.Database => Database;
@@ -31,7 +31,7 @@ public sealed class WebApiDbContext(ILogger<WebApiDbContext> logger, IOptions<Ap
         if (_appSettings.ShowSql)
             optionsBuilder.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
         optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        optionsBuilder.AddInterceptors(_publishDomainEventsInterceptor);
+        optionsBuilder.AddInterceptors(_saveChangesInterceptor);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,12 +40,13 @@ public sealed class WebApiDbContext(ILogger<WebApiDbContext> logger, IOptions<Ap
         modelBuilder
             .Ignore<List<IDomainEvent>>();
 
-        var types = from type in Assembly.GetExecutingAssembly().GetTypes()
-                    where type.Namespace == GetType().Namespace
-                        && !type.IsAbstract
-                        && !type.IsInterface
-                        && type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))
-                    select type;
+        var types =
+            from type in Assembly.GetExecutingAssembly().GetTypes()
+            where type.Namespace == GetType().Namespace
+                && !type.IsAbstract
+                && !type.IsInterface
+                && type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))
+            select type;
         foreach (var type in types)
         {
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.

@@ -1,10 +1,10 @@
-﻿using MinimalApi.Api.Core;
+using MinimalApi.Api.Core;
 
 namespace MinimalApi.Api.Common;
 
-public class DbContextSettings : IDbContextSettings
+public class DbContextSettings(IDatabases dbs) : IDbContextSettings
 {
-    private readonly IDatabases _dbs;
+    private readonly IDatabases _dbs = dbs;
 
     public string? DatabaseName { get; set; }
     public IDatabase Database
@@ -23,10 +23,5 @@ public class DbContextSettings : IDbContextSettings
                 throw new Exception($"{DatabaseName} is not found. {ex}");
             }
         }
-    }
-
-    public DbContextSettings(IDatabases dbs)
-    {
-        _dbs = dbs;
     }
 }
