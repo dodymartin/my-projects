@@ -5,13 +5,13 @@ using MinimalApi.Api.Common;
 
 namespace MinimalApi.Api.Features.Applications;
 
-public class ApplicationDbContext(ILogger<ApplicationDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApplicationDbContext> options, IDbContextSettings settings, SaveChangesInterceptor publishDomainEventsInterceptor) : DbContext(options), IApplicationDbContext
+public class ApplicationDbContext(ILogger<ApplicationDbContext> logger, IOptions<AppSettings> appSettings, DbContextOptions<ApplicationDbContext> options, IDbContextSettings settings, SaveChangesInterceptor saveChangesInterceptor) : DbContext(options), IApplicationDbContext
 {
     private readonly ILogger<ApplicationDbContext> _logger = logger;
     private readonly AppSettings _appSettings = appSettings.Value;
-    private readonly SaveChangesInterceptor _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
-
+    private readonly SaveChangesInterceptor _saveChangesInterceptor = saveChangesInterceptor;
     public IDbContextSettings Settings { get; } = settings;
+
     Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade IApplicationDbContext.Database => Database;
 
     public DbSet<Application> Applications { get; private set; } = null!;
@@ -26,7 +26,7 @@ public class ApplicationDbContext(ILogger<ApplicationDbContext> logger, IOptions
         if (_appSettings.ShowSql)
             optionsBuilder.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
         optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        optionsBuilder.AddInterceptors(_publishDomainEventsInterceptor);
+        optionsBuilder.AddInterceptors(_saveChangesInterceptor);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
