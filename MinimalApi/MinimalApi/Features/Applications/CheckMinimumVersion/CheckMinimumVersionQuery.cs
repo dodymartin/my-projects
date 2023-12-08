@@ -1,6 +1,7 @@
-﻿using ErrorOr;
+using ErrorOr;
 using FluentValidation;
 using MediatR;
+using MinimalApi.Api.Features.WebApis;
 
 namespace MinimalApi.Api.Features.Applications;
 
@@ -26,6 +27,7 @@ public sealed class CheckMinimumVersionQueryValidator : AbstractValidator<CheckM
 public sealed class CheckMinimumVersionQueryHandler(IApplicationRepo applicationRepo)
     : IRequestHandler<CheckMinimumVersionQuery, ErrorOr<bool>>
 {
+    private readonly WebApi _webApi;
     private readonly IApplicationRepo _applicationRepo = applicationRepo;
 
     public async Task<ErrorOr<bool>> Handle(CheckMinimumVersionQuery queryRequest, CancellationToken cancellationToken)

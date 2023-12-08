@@ -1,4 +1,4 @@
-﻿using FluentAssertions.Execution;
+using FluentAssertions.Execution;
 using FluentAssertions;
 using MinimalApi.Api.Features.Applications;
 
@@ -31,7 +31,7 @@ public class CheckMinimumVersionQueryValidationTests
     }
 
     [Fact]
-    public void CheckMinimumVersionQuery_AllBadData_ReturnInvalidWithTwoErrors()
+    public void CheckMinimumVersionQuery_AllBadData_ReturnInvalidWithThreeErrors()
     {
         // Arrange
         var queryRequest = new CheckMinimumVersionQuery(
