@@ -11,6 +11,7 @@ public class SaveChangesInterceptor(IPublisher mediator) : Microsoft.EntityFrame
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
+        SetAuditableEntities(eventData.Context);
         PublishDomainEvents(eventData.Context).GetAwaiter().GetResult();
         return base.SavingChanges(eventData, result);
     }
@@ -21,6 +22,8 @@ public class SaveChangesInterceptor(IPublisher mediator) : Microsoft.EntityFrame
         await PublishDomainEvents(eventData.Context);
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }
+
+    #region Private Methods
 
     private static void SetAuditableEntities(DbContext? dbContext)
     {
@@ -65,4 +68,6 @@ public class SaveChangesInterceptor(IPublisher mediator) : Microsoft.EntityFrame
             await _mediator.Publish(domainEvent);
         }
     }
+
+    #endregion
 }
